@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+    background: #050505;
+}
+
+.basement {
+    width: 100vw;
+    height: 100vh;
+
+    position: relative;
+
+    background:
+        linear-gradient(
+            rgba(10, 10, 10, 0.96),
+            rgba(10, 10, 10, 0.96)
+        ),
+        linear-gradient(
+            135deg,
+            #292929,
+            #111111
+        );
+
+    overflow: hidden;
+}
+
+
+/* -------------------------
+   Basement objects
+------------------------- */
+
+.basement-object {
+    position: absolute;
+
+    color: #777;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+
+    border: 2px solid #444;
+
+    opacity: 0.5;
+
+    transition: opacity 0.2s ease;
+}
+
+
+/* Chair */
+
+.chair {
+    width: 130px;
+    height: 150px;
+
+    left: 20%;
+    top: 55%;
+
+    padding-top: 60px;
+
+    text-align: center;
+}
+
+
+/* Box */
+
+.box {
+    width: 150px;
+    height: 120px;
+
+    right: 20%;
+    bottom: 20%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Door */
+
+.door {
+    width: 160px;
+    height: 300px;
+
+    right: 8%;
+    top: 20%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* -------------------------
+   Flashlight
+------------------------- */
+
+.flashlight {
+
+    position: fixed;
+
+    width: 420px;
+    height: 420px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    transform: translate(-50%, -50%);
+
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.35) 15%,
+        rgba(255, 255, 255, 0.12) 35%,
+        rgba(255, 255, 255, 0.04) 55%,
+        rgba(255, 255, 255, 0) 75%
+    );
+
+    mix-blend-mode: screen;
+
+    filter: blur(4px);
+
+    z-index: 10;
+}
