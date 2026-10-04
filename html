@@ -1,22 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Project（HOVER）</title>
+
+    <title>Interactive Project</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="basement">
-        <!-- Flashlight -->
-        <div class="flashlight"></div>
+    <!-- START PAGE -->
+
+    <div class="start-page" id="startPage">
+
+        <h1>CHOOSE YOUR OBJECT</h1>
+
+        <p class="instruction">
+            Drag an object into the box
+        </p>
+
+        <div class="objects">
+
+            <!-- Receipt -->
+
+            <div class="drag-object"
+                 draggable="true"
+                 data-scene="receipt">
+
+                <img src="image/receipt.svg"
+                     alt="Receipt">
+
+            </div>
+
+
+            <!-- Skull -->
+
+            <div class="drag-object"
+                 draggable="true"
+                 data-scene="skull">
+
+                <img src="image/skull.svg"
+                     alt="Skull">
+
+            </div>
+
+
+            <!-- Mask -->
+
+            <div class="drag-object"
+                 draggable="true"
+                 data-scene="mask">
+
+                <img src="image/mask.svg"
+                     alt="Mask">
+
+            </div>
+
+
+            <!-- Torchlight -->
+
+            <div class="drag-object"
+                 draggable="true"
+                 data-scene="basement">
+
+                <img src="image/tourchlight.svg"
+                     alt="Flashlight">
+
+            </div>
+
+        </div>
+
+
+        <!-- DROP AREA -->
+
+        <div class="drop-area" id="dropArea">
+
+            <div class="drop-light"></div>
+
+            <span>DROP HERE</span>
+
+        </div>
 
     </div>
+    <!-- RECEIPT SCENE -->
+
+<div class="receipt-scene" id="receiptScene">
+
+    <div class="sky"></div>
+
+    <div class="cloud cloud-one"></div>
+    <div class="cloud cloud-two"></div>
+    <div class="cloud cloud-three"></div>
+    <div class="cloud cloud-four"></div>
+
+    <div class="receipt-container" id="receiptContainer">
+
+        <img
+            src="image/receipt.svg"
+            class="receipt-image"
+            id="receiptImage"
+            alt="Receipt"
+        >
+
+    </div>
+
+    <p class="receipt-instruction">
+        MOVE YOUR MOUSE
+    </p>
+
+    <button
+        class="exit-button"
+        id="receiptExit">
+
+        EXIT
+
+    </button>
+
+</div>
+
+
+    <!-- BASEMENT SCENE -->
+
+    <div class="basement" id="basementScene">
+
+        <div class="flashlight"></div>
+
+        <button class="exit-button" id="exitButton">
+            EXIT
+        </button>
+
+    </div>
+
 
     <script src="script.js"></script>
 
 </body>
+
 </html>
