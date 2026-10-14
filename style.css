@@ -1,590 +1,929 @@
+
+/*
+  TRIANGLE PROTOCOL — VISUAL DESIGN
+
+  Design rationale:
+  Dark navy establishes the background. Blue outlines define the triangle
+  nodes, while cyan identifies active signals and normal progress. Red is
+  reserved for incorrect input so error feedback is visually distinct.
+
+  The HUD, triangle matrix and control panel are separated into sections
+  to create a clear hierarchy. The final success overlay reuses the same
+  blue/cyan visual language to communicate that the system is unlocked.
+
+  References:
+  CSS Grid: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
+  Focus visible: https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
+  Reduced motion: https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+*/
+
+:root {
+  --background: #050a13;
+  --panel: #0a1422;
+  --border: #1c3550;
+  --blue: #258bff;
+  --cyan: #53e8ff;
+  --white: #e7f3ff;
+  --muted: #7c94ad;
+  --red: #ff536f;
+}
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    overflow: hidden;
-    background: #050505;
-    font-family: 'Cinzel', serif;
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 30%, #0b1b30 0%, transparent 55%),
+    var(--background);
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
+button {
+  font: inherit;
+}
 
-/* ==================================================
-   START PAGE
-   ================================================== */
+button:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
+}
 
-.start-page {
-    width: 100vw;
-    height: 100vh;
+/* Header */
 
-    position: relative;
+.site-header {
+  min-height: 72px;
+  padding: 0 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(83, 232, 255, 0.13);
+}
 
-    background:
-        radial-gradient(
-            circle at center,
-            #30233d 0%,
-            #17121f 50%,
-            #09070d 100%
-        );
+.logo {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
 
-    display: flex;
+.logo span {
+  color: var(--cyan);
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+
+.status-dot,
+.tiny-dot {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+}
+
+/* Page introduction */
+
+.main-container {
+  width: min(1400px, 94%);
+  margin: 0 auto;
+}
+
+.intro {
+  padding: 38px 0 28px;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  font-size: 11px;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+.intro h1 {
+  margin: 12px 0;
+  font-size: clamp(30px, 4vw, 48px);
+  letter-spacing: -1.5px;
+}
+
+.intro h1 span {
+  color: var(--cyan);
+}
+
+.intro-description {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Main layout */
+
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.matrix-panel,
+.mission-panel {
+  min-width: 0;
+  border: 1px solid var(--border);
+  background: rgba(8, 18, 32, 0.95);
+}
+
+.panel-top {
+  min-height: 45px;
+  padding: 0 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+
+.panel-indicator {
+  color: var(--cyan);
+}
+
+/*
+  HUD:
+  Larger labels and values make system status easy to scan.
+  NODE COUNT is intentionally omitted to keep the display simple.
+*/
+
+.neural-hud {
+  padding: 25px 28px 23px;
+  background: linear-gradient(110deg, #0b1b2d, #081321);
+  border-bottom: 1px solid var(--border);
+}
+
+.hud-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #24405d;
+}
+
+.hud-index {
+  color: var(--cyan);
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  text-shadow: 0 0 14px rgba(83, 232, 255, 0.35);
+}
+
+.hud-title {
+  color: var(--white);
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.hud-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 18px;
+  padding-top: 22px;
+}
+
+.hud-item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.hud-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.hud-value {
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  overflow-wrap: anywhere;
+}
+
+.hud-value.cyan {
+  color: var(--cyan);
+  text-shadow: 0 0 12px rgba(83, 232, 255, 0.2);
+}
+
+.input-item {
+  grid-column: 1 / -1;
+}
+
+/* ACCESS MODE turns red during an incorrect answer. */
+.hud-value.locked {
+  color: var(--red);
+  text-shadow: 0 0 12px rgba(255, 83, 111, 0.4);
+}
+
+/* Triangle game stage */
+
+.matrix-stage {
+  position: relative;
+  min-height: 440px;
+  padding: 34px 28px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.stage-grid {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(37, 139, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 139, 255, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.stage-corner {
+  position: absolute;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  border-color: var(--blue);
+  border-style: solid;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.corner-tl {
+  top: 14px;
+  left: 14px;
+  border-width: 1px 0 0 1px;
+}
+
+.corner-tr {
+  top: 14px;
+  right: 14px;
+  border-width: 1px 1px 0 0;
+}
+
+.corner-bl {
+  bottom: 14px;
+  left: 14px;
+  border-width: 0 0 1px 1px;
+}
+
+.corner-br {
+  bottom: 14px;
+  right: 14px;
+  border-width: 0 1px 1px 0;
+}
+
+/*
+  CSS Grid keeps the 20 buttons evenly spaced. Each triangle is a real
+  button created in JavaScript, so users can interact with individual nodes.
+*/
+
+.matrix {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 13px;
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s ease,
+    visibility 0s;
+}
+
+/* Hide the matrix when the final unlock state appears. */
+.matrix-stage.system-unlocked .matrix {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.88);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s ease,
+    visibility 0s linear 0.65s;
+}
+
+.matrix-stage.system-unlocked .stage-bottom-label {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.triangle {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.2s ease, filter 0.2s ease;
+}
+
+.triangle svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.triangle polygon {
+  fill: rgba(37, 139, 255, 0.025);
+  stroke: #28527a;
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 0.2s ease, fill 0.2s ease;
+}
+
+.triangle .inner-line {
+  fill: none;
+  stroke: #1c3b5a;
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.triangle .node-dot {
+  fill: #3477ad;
+  transition: fill 0.2s ease;
+}
+
+.triangle .node-number {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(10px, 1.2vw, 14px);
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.triangle:hover:not(:disabled) polygon {
+  fill: rgba(37, 139, 255, 0.12);
+  stroke: var(--cyan);
+}
+
+.triangle:disabled {
+  cursor: default;
+}
+
+.triangle.target {
+  color: var(--cyan);
+  filter: drop-shadow(0 0 10px rgba(83, 232, 255, 0.55));
+}
+
+.triangle.target polygon,
+.triangle.active polygon {
+  fill: rgba(37, 139, 255, 0.28);
+  stroke: var(--cyan);
+  stroke-width: 2.2;
+}
+
+.triangle.target .inner-line,
+.triangle.active .inner-line {
+  stroke: #3c9bce;
+}
+
+.triangle.target .node-dot,
+.triangle.active .node-dot {
+  fill: var(--cyan);
+}
+
+.triangle.active {
+  color: var(--cyan);
+  filter: drop-shadow(0 0 7px rgba(83, 232, 255, 0.4));
+}
+
+.triangle.wrong {
+  color: var(--red);
+  filter: drop-shadow(0 0 10px rgba(255, 83, 111, 0.5));
+}
+
+.triangle.wrong polygon {
+  fill: rgba(255, 83, 111, 0.2);
+  stroke: var(--red);
+}
+
+.triangle.wrong .node-dot {
+  fill: var(--red);
+}
+
+.stage-bottom-label {
+  position: absolute;
+  z-index: 2;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.matrix-footer {
+  min-height: 38px;
+  padding: 0 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+/*
+  ERROR OVERLAY:
+  It is positioned relative to the triangle stage so ACCESS LOCKED appears
+  inside the game frame instead of only in the HUD.
+*/
+
+.error-overlay {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(5, 10, 19, 0.82);
+  backdrop-filter: blur(4px);
+  animation: errorFadeIn 0.2s ease-out;
+}
+
+.error-overlay[hidden],
+.unlock-overlay[hidden] {
+  display: none;
+}
+
+.error-box {
+  width: min(360px, 100%);
+  padding: 28px 20px;
+  text-align: center;
+  background: rgba(35, 8, 20, 0.97);
+  border: 1px solid var(--red);
+  box-shadow:
+    0 0 25px rgba(255, 83, 111, 0.2),
+    inset 0 0 20px rgba(255, 83, 111, 0.05);
+}
+
+.error-icon {
+  width: 38px;
+  height: 38px;
+  margin: 0 auto 15px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--red);
+  border-radius: 50%;
+  color: var(--red);
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 0 14px rgba(255, 83, 111, 0.3);
+}
+
+.error-title {
+  color: var(--red);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(255, 83, 111, 0.35);
+}
+
+.error-description {
+  margin-top: 12px;
+  color: #ffd7df;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+.error-subtext {
+  margin-top: 18px;
+  color: #ff8196;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+
+@keyframes errorFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/*
+  SUCCESS OVERLAY:
+  At the end of level seven, the triangle matrix fades away and this
+  message occupies the same stage. The cyan glow provides a clear visual
+  contrast with the red error state.
+*/
+
+.unlock-overlay {
+  position: absolute;
+  z-index: 12;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(3, 10, 22, 0.92);
+  backdrop-filter: blur(7px);
+  animation: unlockFadeIn 0.8s ease forwards;
+}
+
+.unlock-box {
+  width: min(480px, 100%);
+  padding: 38px 24px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at center, rgba(37, 139, 255, 0.13), transparent 70%),
+    rgba(7, 18, 34, 0.96);
+  border: 1px solid var(--cyan);
+  box-shadow:
+    0 0 25px rgba(83, 232, 255, 0.16),
+    inset 0 0 30px rgba(37, 139, 255, 0.07);
+}
+
+.unlock-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 22px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--cyan);
+  border-radius: 50%;
+  color: var(--cyan);
+  font-size: 30px;
+  box-shadow: 0 0 15px rgba(83, 232, 255, 0.3);
+  animation: unlockPulse 2s ease-in-out infinite;
+}
+
+.unlock-eyebrow {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  line-height: 1.8;
+}
+
+.unlock-box h2 {
+  margin: 20px 0;
+  color: var(--white);
+  font-size: clamp(25px, 4vw, 36px);
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.unlock-box h2 span {
+  display: block;
+  margin-top: 8px;
+  color: var(--cyan);
+  text-shadow: 0 0 18px rgba(83, 232, 255, 0.55);
+}
+
+.unlock-description {
+  color: #b7d2e8;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+
+.unlock-line {
+  width: 70%;
+  height: 2px;
+  margin: 25px auto;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  box-shadow: 0 0 12px rgba(83, 232, 255, 0.5);
+}
+
+.unlock-footer {
+  color: var(--cyan);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+@keyframes unlockFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes unlockPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(83, 232, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(83, 232, 255, 0.5);
+  }
+}
+
+/* Memory protocol panel */
+
+.mission-panel {
+  padding: 24px 21px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mission-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.heading-line {
+  width: 3px;
+  height: 19px;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+
+.mission-heading h2 {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+}
+
+.level-display {
+  padding: 25px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.label {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+.level-number {
+  color: var(--cyan);
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.signal-message {
+  padding: 25px 0;
+  min-height: 125px;
+}
+
+.signal-title {
+  color: var(--cyan);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.signal-description {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.level-progress-section {
+  padding: 18px 0 25px;
+  border-top: 1px solid var(--border);
+}
+
+.progress-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+#level-progress {
+  color: var(--cyan);
+}
+
+.progress-track {
+  height: 5px;
+  margin-top: 13px;
+  background: #17283b;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+  transition: width 0.3s ease;
+}
+
+.mission-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.text-button {
+  width: 100%;
+  padding: 13px 0;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.restart-button {
+  color: var(--cyan);
+}
+
+.restart-button span {
+  margin-left: 6px;
+}
+
+.reset-button {
+  color: var(--muted);
+}
+
+.text-button:hover {
+  color: var(--white);
+}
+
+.feedback-message {
+  margin-top: auto;
+  padding-top: 22px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+  line-height: 1.6;
+}
+
+/* Footer */
+
+.page-footer {
+  padding: 28px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #536a83;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+/* Responsive layout for tablets and mobile screens. */
+@media (max-width: 900px) {
+  .game-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-panel {
+    min-height: 0;
+  }
+
+  .feedback-message {
+    margin-top: 10px;
+  }
+
+  .matrix-stage {
+    min-height: 390px;
+  }
+}
+
+@media (max-width: 520px) {
+  .main-container {
+    width: 94%;
+  }
+
+  .site-header {
+    padding: 0 4%;
+  }
+
+  .logo {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .system-status {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+
+  .neural-hud {
+    padding: 20px 15px;
+  }
+
+  .hud-title {
+    font-size: 15px;
+    letter-spacing: 1px;
+  }
+
+  .hud-index {
+    font-size: 25px;
+  }
+
+  .hud-grid {
+    gap: 19px 12px;
+  }
+
+  .hud-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .hud-value {
+    font-size: 15px;
+  }
+
+  .matrix-stage {
+    min-height: 300px;
+    padding: 30px 14px 45px;
+  }
+
+  .matrix {
+    gap: 7px;
+  }
+
+  .matrix-footer {
+    font-size: 8px;
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+
+  .page-footer {
     flex-direction: column;
-    align-items: center;
+  }
 
-    overflow: hidden;
+  .error-box {
+    padding: 23px 15px;
+  }
 
-    color: white;
+  .error-title {
+    font-size: 19px;
+  }
+
+  .unlock-box {
+    padding: 28px 15px;
+  }
 }
 
-
-.start-page h1 {
-    margin-top: 70px;
-
-    font-size: 32px;
-    font-weight: 400;
-
-    letter-spacing: 8px;
-
-    text-align: center;
-}
-
-
-.instruction {
-    margin-top: 12px;
-
-    font-size: 14px;
-
-    letter-spacing: 3px;
-
-    opacity: 0.55;
-}
-
-
-/* ==================================================
-   OBJECTS
-   ================================================== */
-
-.objects {
-    width: 80%;
-
-    display: flex;
-
-    justify-content: space-around;
-    align-items: center;
-
-    margin-top: 80px;
-}
-
-
-.drag-object {
-    width: 180px;
-    height: 180px;
-
-    position: relative;
-    z-index: 10;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    cursor: grab;
-
-    transition:
-        transform 0.3s ease,
-        opacity 0.3s ease;
-}
-
-
-.drag-object:active {
-    cursor: grabbing;
-}
-
-
-.drag-object:hover {
-    transform:
-        translateY(-10px)
-        scale(1.05);
-}
-
-
-.drag-object img {
-    max-width: 150px;
-    max-height: 150px;
-
-    width: auto;
-    height: auto;
-
-    object-fit: contain;
-
-    user-select: none;
-
-    pointer-events: none;
-
-    filter:
-        drop-shadow(
-            0 10px 15px
-            rgba(0, 0, 0, 0.6)
-        );
-}
-
-
-/* Mask */
-
-.drag-object:nth-child(3) img {
-    max-width: 210px;
-    max-height: 210px;
-}
-
-
-/* Torchlight */
-
-.drag-object:nth-child(4) img {
-    max-width: 220px;
-    max-height: 220px;
-}
-
-
-/* ==================================================
-   DROP AREA
-   ================================================== */
-
-.drop-area {
-    position: absolute;
-
-    left: 50%;
-    bottom: 80px;
-
-    transform: translateX(-50%);
-
-    width: 240px;
-    height: 120px;
-
-    z-index: 10;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.45);
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    overflow: hidden;
-
-    transition:
-        border 0.3s ease,
-        transform 0.3s ease,
-        background 0.3s ease;
-}
-
-
-.drop-area span {
-    position: relative;
-
-    z-index: 2;
-
-    font-size: 14px;
-
-    letter-spacing: 4px;
-
-    color:
-        rgba(255, 255, 255, 0.75);
-}
-
-
-.drop-light {
-    position: absolute;
-
-    width: 180px;
-    height: 180px;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(255,255,255,0.18),
-            rgba(255,255,255,0) 70%
-        );
-
-    filter: blur(10px);
-
-    pointer-events: none;
-}
-
-
-.drop-area.drag-over {
-    border:
-        1px solid white;
-
-    background:
-        rgba(255,255,255,0.08);
-
-    transform:
-        translateX(-50%)
-        scale(1.08);
-}
-
-
-/* ==================================================
-   BASEMENT
-   ================================================== */
-
-.basement {
-    width: 100vw;
-    height: 100vh;
-
-    position: relative;
-
-    background-image:
-        url("image/basement1.png");
-
-    background-size: cover;
-
-    background-position: center;
-
-    background-repeat: no-repeat;
-
-    overflow: hidden;
-
-    display: none;
-}
-
-
-/* ==================================================
-   BASEMENT DARK OVERLAY
-   ================================================== */
-
-.basement::after {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        rgba(0, 0, 0, 0.80);
-
-    pointer-events: none;
-
-    z-index: 5;
-}
-
-
-/* ==================================================
-   FLASHLIGHT
-   ================================================== */
-
-.flashlight {
-    position: fixed;
-
-    width: 360px;
-    height: 360px;
-
-    border-radius: 50%;
-
-    pointer-events: none;
-
-    transform:
-        translate(-50%, -50%);
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.45) 0%,
-            rgba(255, 255, 255, 0.38) 18%,
-            rgba(255, 255, 255, 0.20) 38%,
-            rgba(255, 255, 255, 0.08) 58%,
-            rgba(255, 255, 255, 0) 78%
-        );
-
-    mix-blend-mode: screen;
-
-    filter:
-        blur(10px);
-
-    z-index: 10;
-}
-
-
-/* ==================================================
-   EXIT BUTTON
-   ================================================== */
-
-.exit-button {
-    position: absolute;
-
-    top: 25px;
-    right: 25px;
-
-    z-index: 20;
-
-    padding: 10px 20px;
-
-    background:
-        rgba(0,0,0,0.35);
-
-    color: white;
-
-    border:
-        1px solid
-        rgba(255,255,255,0.6);
-
-    cursor: pointer;
-
-    letter-spacing: 2px;
-
-    font-size: 12px;
-
-    font-family: 'Cinzel', serif;
-
-    transition: 0.3s;
-}
-
-
-.exit-button:hover {
-    background:
-        rgba(0,0,0,0.55);
-
-    border-color: white;
-}
-/* ==================================================
-   RECEIPT SCENE
-   ================================================== */
-
-.receipt-scene {
-    width: 100vw;
-    height: 100vh;
-
-    position: relative;
-
-    display: none;
-
-    overflow: hidden;
-
-    cursor: default;
-}
-
-
-/* ==================================================
-   SKY
-   ================================================== */
-
-.sky {
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        linear-gradient(
-            180deg,
-            #5fa8e8 0%,
-            #8fc8f0 45%,
-            #d7effc 100%
-        );
-
-    z-index: 0;
-}
-
-
-/* ==================================================
-   CLOUDS
-   ================================================== */
-
-.cloud {
-    position: absolute;
-
-    background:
-        rgba(255, 255, 255, 0.92);
-
-    border-radius: 100px;
-
-    filter: blur(1px);
-
-    opacity: 0.9;
-}
-
-
-/* Cloud 1 */
-
-.cloud-one {
-    width: 280px;
-    height: 75px;
-
-    top: 18%;
-    left: -40px;
-}
-
-.cloud-one::before {
-    content: "";
-
-    position: absolute;
-
-    width: 120px;
-    height: 120px;
-
-    background: white;
-
-    border-radius: 50%;
-
-    left: 55px;
-    bottom: 5px;
-}
-
-
-/* Cloud 2 */
-
-.cloud-two {
-    width: 330px;
-    height: 85px;
-
-    top: 35%;
-    right: -80px;
-}
-
-.cloud-two::before {
-    content: "";
-
-    position: absolute;
-
-    width: 140px;
-    height: 140px;
-
-    background: white;
-
-    border-radius: 50%;
-
-    left: 70px;
-    bottom: 0;
-}
-
-
-/* Cloud 3 */
-
-.cloud-three {
-    width: 220px;
-    height: 60px;
-
-    top: 65%;
-    left: 12%;
-
-    opacity: 0.65;
-}
-
-.cloud-three::before {
-    content: "";
-
-    position: absolute;
-
-    width: 90px;
-    height: 90px;
-
-    background: white;
-
-    border-radius: 50%;
-
-    left: 45px;
-    bottom: 0;
-}
-
-
-/* Cloud 4 */
-
-.cloud-four {
-    width: 250px;
-    height: 65px;
-
-    top: 78%;
-    right: 8%;
-
-    opacity: 0.7;
-}
-
-.cloud-four::before {
-    content: "";
-
-    position: absolute;
-
-    width: 100px;
-    height: 100px;
-
-    background: white;
-
-    border-radius: 50%;
-
-    left: 55px;
-    bottom: 0;
-}
-
-
-/* ==================================================
-   RECEIPT
-   ================================================== */
-
-.receipt-container {
-    position: absolute;
-
-    width: 330px;
-    height: 500px;
-
-    left: 50%;
-    top: 50%;
-
-    transform:
-        translate(-50%, -50%);
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    z-index: 5;
-}
-
-
-.receipt-image {
-    width: 100%;
-    height: 100%;
-
-    object-fit: contain;
-
-    user-select: none;
-
-    transition:
-        transform 0.15s ease;
-
-    filter:
-        drop-shadow(
-            0 20px 25px
-            rgba(0, 0, 0, 0.25)
-        );
-}
-
-
-/* ==================================================
-   RECEIPT INSTRUCTION
-   ================================================== */
-
-.receipt-instruction {
-    position: absolute;
-
-    bottom: 50px;
-
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    z-index: 10;
-
-    font-size: 13px;
-
-    letter-spacing: 5px;
-
-    color:
-        rgba(255,255,255,0.7);
+/*
+  Accessibility: reduce animation when the visitor prefers reduced motion.
+  Reference:
+  https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .unlock-icon {
+    animation: none;
+  }
 }

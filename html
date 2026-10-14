@@ -1,142 +1,165 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Interactive Project</title>
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triangle Protocol（CLICK）</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
-
 <body>
+  <header class="site-header">
+    <a class="logo" href="#">TRIANGLE<span>_PROTOCOL</span></a>
+    <div class="system-status">
+      <span class="status-dot"></span>SYSTEM ONLINE
+    </div>
+  </header>
 
-    <!-- START PAGE -->
+  <main class="main-container">
+    <section class="intro">
+      <p class="eyebrow">MEMORY RECONSTRUCTION SYSTEM</p>
+      <h1>Reconstruct the <span>sequence.</span></h1>
+      <p class="intro-description">
+        Observe the signal. Remember the pattern. Restore the system.
+      </p>
+    </section>
 
-    <div class="start-page" id="startPage">
-
-        <h1>CHOOSE YOUR OBJECT</h1>
-
-        <p class="instruction">
-            Drag an object into the box
-        </p>
-
-        <div class="objects">
-
-            <!-- Receipt -->
-
-            <div class="drag-object"
-                 draggable="true"
-                 data-scene="receipt">
-
-                <img src="image/receipt.svg"
-                     alt="Receipt">
-
-            </div>
-
-
-            <!-- Skull -->
-
-            <div class="drag-object"
-                 draggable="true"
-                 data-scene="skull">
-
-                <img src="image/skull.svg"
-                     alt="Skull">
-
-            </div>
-
-
-            <!-- Mask -->
-
-            <div class="drag-object"
-                 draggable="true"
-                 data-scene="mask">
-
-                <img src="image/mask.svg"
-                     alt="Mask">
-
-            </div>
-
-
-            <!-- Torchlight -->
-
-            <div class="drag-object"
-                 draggable="true"
-                 data-scene="basement">
-
-                <img src="image/tourchlight.svg"
-                     alt="Flashlight">
-
-            </div>
-
+    <section class="game-layout" aria-label="Triangle memory game">
+      <div class="matrix-panel">
+        <div class="panel-top">
+          <span>TRIANGLE INTERFACE</span>
+          <span class="panel-indicator">● ACTIVE</span>
         </div>
 
+        <!-- HUD: concise status information keeps the task easy to scan. -->
+        <section class="neural-hud" aria-label="Game status">
+          <div class="hud-heading">
+            <span class="hud-index" id="hud-index">01</span>
+            <span class="hud-title">/ NEURAL MATRIX</span>
+          </div>
 
-        <!-- DROP AREA -->
+          <div class="hud-grid">
+            <div class="hud-item input-item">
+              <span class="hud-label">INPUT REQUIRED</span>
+              <span class="hud-value" id="input-required">AWAITING INPUT</span>
+            </div>
 
-        <div class="drop-area" id="dropArea">
+            <div class="hud-item">
+              <span class="hud-label">SIGNAL STATUS</span>
+              <span class="hud-value cyan" id="signal-status">READY</span>
+            </div>
 
-            <div class="drop-light"></div>
+            <div class="hud-item">
+              <span class="hud-label">SECURITY LEVEL</span>
+              <span class="hud-value cyan" id="security-level">01 / 07</span>
+            </div>
 
-            <span>DROP HERE</span>
+            <div class="hud-item access-item">
+              <span class="hud-label">ACCESS MODE</span>
+              <span class="hud-value" id="access-mode">STANDBY</span>
+            </div>
+          </div>
+        </section>
 
+        <!-- All game feedback is layered inside this frame. -->
+        <div class="matrix-stage" id="matrix-stage">
+          <div class="stage-grid" aria-hidden="true"></div>
+          <div class="stage-corner corner-tl" aria-hidden="true"></div>
+          <div class="stage-corner corner-tr" aria-hidden="true"></div>
+          <div class="stage-corner corner-bl" aria-hidden="true"></div>
+          <div class="stage-corner corner-br" aria-hidden="true"></div>
+
+          <!-- JavaScript generates the 20 interactive triangle buttons. -->
+          <div class="matrix" id="matrix" aria-label="Triangle nodes"></div>
+
+          <!-- Wrong-answer overlay -->
+          <div class="error-overlay" id="error-overlay" hidden>
+            <div class="error-box" role="alert" aria-live="assertive">
+              <span class="error-icon" aria-hidden="true">!</span>
+              <div class="error-title">ACCESS LOCKED</div>
+              <div class="error-description">SEQUENCE MISMATCH</div>
+              <div class="error-subtext">REPLAYING SIGNAL...</div>
+            </div>
+          </div>
+
+          <!-- Final success overlay, displayed after level seven. -->
+          <div class="unlock-overlay" id="unlock-overlay" hidden>
+            <div class="unlock-box">
+              <div class="unlock-icon" aria-hidden="true">✓</div>
+              <p class="unlock-eyebrow">ALL SECURITY LEVELS VERIFIED</p>
+              <h2>SYSTEM <span>UNLOCKED</span></h2>
+              <p class="unlock-description">MEMORY SEQUENCE COMPLETE.</p>
+              <div class="unlock-line"></div>
+              <p class="unlock-footer">ACCESS GRANTED // TP-07</p>
+            </div>
+          </div>
+
+          <div class="stage-bottom-label">
+            <span class="tiny-dot" aria-hidden="true"></span>
+            CLICK THE TRIANGLES IN SEQUENCE
+          </div>
         </div>
 
-    </div>
-    <!-- RECEIPT SCENE -->
+        <div class="matrix-footer">
+          <span>MEMORY TEST // TP-07</span>
+          <span>SECURE CONNECTION // ESTABLISHED</span>
+        </div>
+      </div>
 
-<div class="receipt-scene" id="receiptScene">
+      <!-- Simplified memory protocol panel -->
+      <aside class="mission-panel" aria-label="Memory protocol controls">
+        <div class="mission-heading">
+          <span class="heading-line" aria-hidden="true"></span>
+          <h2>MEMORY PROTOCOL</h2>
+        </div>
 
-    <div class="sky"></div>
+        <div class="level-display">
+          <span class="label">LEVEL</span>
+          <span class="level-number" id="level-count">01 / 07</span>
+        </div>
 
-    <div class="cloud cloud-one"></div>
-    <div class="cloud cloud-two"></div>
-    <div class="cloud cloud-three"></div>
-    <div class="cloud cloud-four"></div>
+        <div class="signal-message">
+          <p class="signal-title" id="matrix-status">SIGNAL RECEIVED.</p>
+          <p class="signal-description" id="instruction">AWAITING YOUR INPUT.</p>
+        </div>
 
-    <div class="receipt-container" id="receiptContainer">
+        <div class="level-progress-section">
+          <div class="progress-heading">
+            <span>LEVEL PROGRESS</span>
+            <span id="level-progress">00 / 07</span>
+          </div>
 
-        <img
-            src="image/receipt.svg"
-            class="receipt-image"
-            id="receiptImage"
-            alt="Receipt"
-        >
+          <div
+            class="progress-track"
+            id="progress-track"
+            role="progressbar"
+            aria-label="Completed levels"
+            aria-valuemin="0"
+            aria-valuemax="7"
+            aria-valuenow="0"
+          >
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
 
-    </div>
+        <div class="mission-actions">
+          <button class="text-button restart-button" id="start-button" type="button">
+            RESTART TEST <span aria-hidden="true">↗</span>
+          </button>
+          <button class="text-button reset-button" id="reset-button" type="button">
+            RESET PROTOCOL
+          </button>
+        </div>
 
-    <p class="receipt-instruction">
-        MOVE YOUR MOUSE
-    </p>
+        <p class="feedback-message" id="feedback" aria-live="polite">SYSTEM READY.</p>
+      </aside>
+    </section>
 
-    <button
-        class="exit-button"
-        id="receiptExit">
-
-        EXIT
-
-    </button>
-
-</div>
-
-
-    <!-- BASEMENT SCENE -->
-
-    <div class="basement" id="basementScene">
-
-        <div class="flashlight"></div>
-
-        <button class="exit-button" id="exitButton">
-            EXIT
-        </button>
-
-    </div>
-
-
-    <script src="script.js"></script>
-
+    <footer class="page-footer">
+      <span>TP-07 // MEMORY TEST</span>
+      <span>INTERACTIVE SYSTEMS DIVISION</span>
+    </footer>
+  </main>
 </body>
-
 </html>
