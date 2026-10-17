@@ -1,10 +1,49 @@
 
+<!--
+TRIANGLE PROTOCOL（CLICK）
+DESIGN INSPIRED BY Link：https://www.orvelumm.com/lab?utm_source
+Triangle Protocol is a browser-based memory reconstruction game. The
+player observes a sequence of highlighted triangle nodes and then
+repeats the same sequence by clicking the nodes in the correct order.
+The fictional security-system theme gives this simple memory activity
+a clear purpose: each completed level represents progress towards
+restoring access to the system.
+
+I organised the interface into an introduction screen and a separate
+game screen. The introduction establishes the context before the player
+starts interacting.  This separation is intended to make the first step clear 
+and avoid presenting all the game information at once.
+
+The HTML uses semantic elements such as header, main, section, aside
+and footer to organise content into meaningful areas. Buttons are used
+for actions because they are interactive controls, rather than using
+ordinary text elements as clickable controls. The type="button"
+attribute makes the intended button behaviour explicit.
+
+The hidden attribute is used on the game screen and feedback overlays
+so that these elements can be shown or hidden as the interaction
+progresses. The JavaScript controls when the player moves between
+screens and when error or success feedback becomes visible.
+
+Accessibility was also considered. Labels such as aria-label provide
+descriptions for interface elements where visual appearance alone may
+not communicate their purpose. Decorative elements use aria-hidden="true" so that
+they do not add unnecessary information to the accessibility tree.
+
+The triangle shapes are generated through inline SVG in JavaScript,
+rather than loaded from an external image library. The supplied HTML
+does not reference third-party image, icon or audio assets. Therefore,
+there are no external media creators or media licences to attribute
+for the assets shown in this version.
+
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Triangle Protocol（CLICK）</title>
+  <title>Triangle Protocol</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
@@ -12,154 +51,195 @@
   <header class="site-header">
     <a class="logo" href="#">TRIANGLE<span>_PROTOCOL</span></a>
     <div class="system-status">
-      <span class="status-dot"></span>SYSTEM ONLINE
+      <span class="status-dot"></span>
+      SYSTEM ONLINE
     </div>
   </header>
 
   <main class="main-container">
-    <section class="intro">
+
+    <!-- FIRST SCREEN: INTRO -->
+    <section class="intro-screen" id="intro-screen">
       <p class="eyebrow">MEMORY RECONSTRUCTION SYSTEM</p>
+
       <h1>Reconstruct the <span>sequence.</span></h1>
+
       <p class="intro-description">
         Observe the signal. Remember the pattern. Restore the system.
       </p>
-    </section>
 
-    <section class="game-layout" aria-label="Triangle memory game">
-      <div class="matrix-panel">
-        <div class="panel-top">
-          <span>TRIANGLE INTERFACE</span>
-          <span class="panel-indicator">● ACTIVE</span>
-        </div>
-
-        <!-- HUD: concise status information keeps the task easy to scan. -->
-        <section class="neural-hud" aria-label="Game status">
-          <div class="hud-heading">
-            <span class="hud-index" id="hud-index">01</span>
-            <span class="hud-title">/ NEURAL MATRIX</span>
-          </div>
-
-          <div class="hud-grid">
-            <div class="hud-item input-item">
-              <span class="hud-label">INPUT REQUIRED</span>
-              <span class="hud-value" id="input-required">AWAITING INPUT</span>
-            </div>
-
-            <div class="hud-item">
-              <span class="hud-label">SIGNAL STATUS</span>
-              <span class="hud-value cyan" id="signal-status">READY</span>
-            </div>
-
-            <div class="hud-item">
-              <span class="hud-label">SECURITY LEVEL</span>
-              <span class="hud-value cyan" id="security-level">01 / 07</span>
-            </div>
-
-            <div class="hud-item access-item">
-              <span class="hud-label">ACCESS MODE</span>
-              <span class="hud-value" id="access-mode">STANDBY</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- All game feedback is layered inside this frame. -->
-        <div class="matrix-stage" id="matrix-stage">
-          <div class="stage-grid" aria-hidden="true"></div>
-          <div class="stage-corner corner-tl" aria-hidden="true"></div>
-          <div class="stage-corner corner-tr" aria-hidden="true"></div>
-          <div class="stage-corner corner-bl" aria-hidden="true"></div>
-          <div class="stage-corner corner-br" aria-hidden="true"></div>
-
-          <!-- JavaScript generates the 20 interactive triangle buttons. -->
-          <div class="matrix" id="matrix" aria-label="Triangle nodes"></div>
-
-          <!-- Wrong-answer overlay -->
-          <div class="error-overlay" id="error-overlay" hidden>
-            <div class="error-box" role="alert" aria-live="assertive">
-              <span class="error-icon" aria-hidden="true">!</span>
-              <div class="error-title">ACCESS LOCKED</div>
-              <div class="error-description">SEQUENCE MISMATCH</div>
-              <div class="error-subtext">REPLAYING SIGNAL...</div>
-            </div>
-          </div>
-
-          <!-- Final success overlay, displayed after level seven. -->
-          <div class="unlock-overlay" id="unlock-overlay" hidden>
-            <div class="unlock-box">
-              <div class="unlock-icon" aria-hidden="true">✓</div>
-              <p class="unlock-eyebrow">ALL SECURITY LEVELS VERIFIED</p>
-              <h2>SYSTEM <span>UNLOCKED</span></h2>
-              <p class="unlock-description">MEMORY SEQUENCE COMPLETE.</p>
-              <div class="unlock-line"></div>
-              <p class="unlock-footer">ACCESS GRANTED // TP-07</p>
-            </div>
-          </div>
-
-          <div class="stage-bottom-label">
-            <span class="tiny-dot" aria-hidden="true"></span>
-            CLICK THE TRIANGLES IN SEQUENCE
-          </div>
-        </div>
-
-        <div class="matrix-footer">
-          <span>MEMORY TEST // TP-07</span>
-          <span>SECURE CONNECTION // ESTABLISHED</span>
-        </div>
+      <div class="intro-decoration" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
 
-      <!-- Simplified memory protocol panel -->
-      <aside class="mission-panel" aria-label="Memory protocol controls">
-        <div class="mission-heading">
-          <span class="heading-line" aria-hidden="true"></span>
-          <h2>MEMORY PROTOCOL</h2>
-        </div>
+      <p class="intro-instruction">
+        A COGNITIVE MEMORY TEST // TP-07
+      </p>
 
-        <div class="level-display">
-          <span class="label">LEVEL</span>
-          <span class="level-number" id="level-count">01 / 07</span>
-        </div>
+      <button class="system-unlock-button" id="system-unlock-button" type="button">
+        UNLOCK THE SYSTEM
+        <span aria-hidden="true">→</span>
+      </button>
 
-        <div class="signal-message">
-          <p class="signal-title" id="matrix-status">SIGNAL RECEIVED.</p>
-          <p class="signal-description" id="instruction">AWAITING YOUR INPUT.</p>
-        </div>
-
-        <div class="level-progress-section">
-          <div class="progress-heading">
-            <span>LEVEL PROGRESS</span>
-            <span id="level-progress">00 / 07</span>
-          </div>
-
-          <div
-            class="progress-track"
-            id="progress-track"
-            role="progressbar"
-            aria-label="Completed levels"
-            aria-valuemin="0"
-            aria-valuemax="7"
-            aria-valuenow="0"
-          >
-            <div class="progress-fill" id="progress-fill"></div>
-          </div>
-        </div>
-
-        <div class="mission-actions">
-          <button class="text-button restart-button" id="start-button" type="button">
-            RESTART TEST <span aria-hidden="true">↗</span>
-          </button>
-          <button class="text-button reset-button" id="reset-button" type="button">
-            RESET PROTOCOL
-          </button>
-        </div>
-
-        <p class="feedback-message" id="feedback" aria-live="polite">SYSTEM READY.</p>
-      </aside>
+      <p class="intro-footer">INITIALISE THE INTERFACE TO CONTINUE</p>
     </section>
 
-    <footer class="page-footer">
-      <span>TP-07 // MEMORY TEST</span>
-      <span>INTERACTIVE SYSTEMS DIVISION</span>
-    </footer>
+    <!-- SECOND SCREEN: GAME -->
+    <section class="game-screen" id="game-screen" hidden>
+      <div class="game-heading">
+        <p class="eyebrow">NEURAL INTERFACE // TP-07</p>
+        <h1>Memory <span>Protocol.</span></h1>
+        <p class="intro-description">
+          Observe the signal. Remember the pattern. Restore the system.
+        </p>
+      </div>
+
+      <section class="game-layout" aria-label="Triangle memory game">
+
+        <!-- LEFT PANEL -->
+        <div class="matrix-panel">
+          <div class="panel-top">
+            <span>TRIANGLE INTERFACE</span>
+            <span class="panel-indicator">● ACTIVE</span>
+          </div>
+
+          <section class="neural-hud" aria-label="Game status">
+            <div class="hud-heading">
+              <span class="hud-index" id="hud-index">01</span>
+              <span class="hud-title">/ NEURAL MATRIX</span>
+            </div>
+
+            <div class="hud-grid">
+              <div class="hud-item">
+                <span class="hud-label">INPUT REQUIRED</span>
+                <span class="hud-value" id="input-required">AWAITING INPUT</span>
+              </div>
+
+              <div class="hud-item">
+                <span class="hud-label">SIGNAL STATUS</span>
+                <span class="hud-value cyan" id="signal-status">STANDBY</span>
+              </div>
+
+              <div class="hud-item">
+                <span class="hud-label">SECURITY LEVEL</span>
+                <span class="hud-value cyan" id="security-level">01 / 07</span>
+              </div>
+
+              <div class="hud-item">
+                <span class="hud-label">ACCESS MODE</span>
+                <span class="hud-value" id="access-mode">STANDBY</span>
+              </div>
+            </div>
+          </section>
+
+          <div class="matrix-stage" id="matrix-stage">
+            <div class="stage-grid" aria-hidden="true"></div>
+            <div class="stage-corner corner-tl" aria-hidden="true"></div>
+            <div class="stage-corner corner-tr" aria-hidden="true"></div>
+            <div class="stage-corner corner-bl" aria-hidden="true"></div>
+            <div class="stage-corner corner-br" aria-hidden="true"></div>
+
+            <div class="matrix" id="matrix" aria-label="Triangle nodes"></div>
+
+            <!-- Wrong answer overlay -->
+            <div class="error-overlay" id="error-overlay" hidden>
+              <div class="error-box" role="alert" aria-live="assertive">
+                <span class="error-icon" aria-hidden="true">!</span>
+                <div class="error-title">ACCESS LOCKED</div>
+                <div class="error-description">SEQUENCE MISMATCH</div>
+                <div class="error-subtext">REPLAYING SIGNAL...</div>
+              </div>
+            </div>
+
+            <!-- Final success overlay -->
+            <div class="success-overlay" id="success-overlay" hidden>
+              <div class="success-box">
+                <div class="success-icon" aria-hidden="true">✓</div>
+                <p class="success-eyebrow">ALL SECURITY LEVELS VERIFIED</p>
+                <h2>SYSTEM <span>UNLOCKED</span></h2>
+                <p class="success-description">MEMORY SEQUENCE COMPLETE.</p>
+                <div class="success-line"></div>
+                <p class="success-footer">ACCESS GRANTED // TP-07</p>
+              </div>
+            </div>
+
+            <div class="stage-bottom-label">
+              <span class="tiny-dot" aria-hidden="true"></span>
+              <span id="stage-instruction">SYSTEM IN STANDBY</span>
+            </div>
+          </div>
+
+          <div class="matrix-footer">
+            <span>MEMORY TEST // TP-07</span>
+            <span>SECURE CONNECTION // ESTABLISHED</span>
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <aside class="mission-panel" aria-label="Memory protocol controls">
+          <div class="mission-heading">
+            <span class="heading-line" aria-hidden="true"></span>
+            <h2>MEMORY PROTOCOL</h2>
+          </div>
+
+          <div class="level-display">
+            <span class="label">LEVEL</span>
+            <span class="level-number" id="level-count">01 / 07</span>
+          </div>
+
+          <div class="signal-message">
+            <p class="signal-title" id="matrix-status">SYSTEM STANDBY.</p>
+            <p class="signal-description" id="instruction">
+              UNLOCK THE SYSTEM TO BEGIN.
+            </p>
+          </div>
+
+          <div class="level-progress-section">
+            <div class="progress-heading">
+              <span>LEVEL PROGRESS</span>
+              <span id="level-progress">00 / 07</span>
+            </div>
+
+            <div
+              class="progress-track"
+              id="progress-track"
+              role="progressbar"
+              aria-label="Completed levels"
+              aria-valuemin="0"
+              aria-valuemax="7"
+              aria-valuenow="0"
+            >
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="mission-actions">
+            <button class="text-button restart-button" id="start-button" type="button">
+              RESTART TEST <span aria-hidden="true">↗</span>
+            </button>
+
+            <button class="text-button reset-button" id="reset-button" type="button">
+              RESET PROTOCOL
+            </button>
+
+            <button class="unlock-game-button" id="unlock-game-button" type="button">
+              UNLOCK <span aria-hidden="true">→</span>
+            </button>
+          </div>
+
+          <p class="feedback-message" id="feedback" aria-live="polite">
+            SYSTEM READY.
+          </p>
+        </aside>
+      </section>
+
+      <footer class="page-footer">
+        <span>TP-07 // MEMORY TEST</span>
+        <span>INTERACTIVE SYSTEMS DIVISION</span>
+      </footer>
+    </section>
   </main>
 </body>
 </html>

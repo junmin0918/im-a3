@@ -1,20 +1,57 @@
 
 /*
-  TRIANGLE PROTOCOL — VISUAL DESIGN
+TRIANGLE PROTOCOL（CLICK）
 
-  Design rationale:
-  Dark navy establishes the background. Blue outlines define the triangle
-  nodes, while cyan identifies active signals and normal progress. Red is
-  reserved for incorrect input so error feedback is visually distinct.
+The visual direction is based on a fictional digital security interface.
+Deep navy backgrounds create a dark environment, while cyan and blue
+highlights distinguish important information and active controls. Red
+is reserved for incorrect input.These colour choices support the system
+theme and make changes in interaction state easier to recognise.
 
-  The HUD, triangle matrix and control panel are separated into sections
-  to create a clear hierarchy. The final success overlay reuses the same
-  blue/cyan visual language to communicate that the system is unlocked.
+CSS custom properties are used for the main colours. This allows the
+same colour values to be reused across panels, buttons, borders and
+status indicators. It also makes later visual adjustments more
+consistent, because a shared colour can be changed in one place.
 
-  References:
-  CSS Grid: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
-  Focus visible: https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
-  Reduced motion: https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+The layout uses CSS Grid for the main game area and the triangle matrix.
+Grid makes it possible to align the game board and mission panel into
+a clear composition, while the five-column triangle matrix keeps the
+nodes evenly arranged. Flexbox is used for smaller interface areas to
+align text and buttons.
+
+Technical reference — MDN Web Docs, CSS Grid Layout:
+https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout
+
+The responsive media queries adjust the layout for smaller screens.
+On narrower screens, the game and mission panels stack vertically,
+while spacing and text sizes are reduced to make the interface fit
+smaller displays. The intention is to preserve the main interaction
+rather than simply shrinking the desktop layout.
+
+Hover, active and transition styles provide visual feedback when a
+player interacts with a button or triangle. The error and success
+overlays use a darker background to bring attention to the current
+game state. The keyboard focus-visible outline helps users identify
+which interactive control currently has keyboard focus.
+
+The reduced-motion media query respects a user's operating-system
+preference for less animation. This is important because decorative
+movement should not be necessary for understanding or completing the
+memory test.
+
+Technical reference — MDN Web Docs, prefers-reduced-motion:
+https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion
+
+The interface uses system font families such as Arial, Helvetica and
+sans-serif. No external font stylesheet is linked in the supplied
+HTML, so there is no third-party font file requiring attribution.
+The gradients, borders, grid background, glow effects and animations
+are created with CSS rather than downloaded image assets.
+
+A design challenge is balancing the futuristic atmosphere with clarity.
+Too many bright effects could compete with the triangle sequence, so
+the strongest visual feedback is reserved for important states such as
+hover and a wrong answer.
 */
 
 :root {
@@ -32,41 +69,52 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 50% 30%, #0b1b30 0%, transparent 55%),
-    var(--background);
+  background: linear-gradient(135deg, #050a13 10%, #0b1b30 45%, #102b49 100%);
   color: var(--white);
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button {
+button,
+a {
   font: inherit;
 }
 
-button:focus-visible {
+button:focus-visible,
+a:focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 4px;
 }
 
-/* Header */
+/* HEADER */
 
 .site-header {
-  min-height: 72px;
-  padding: 0 6%;
+  min-height: 70px;
+  padding: 0 5%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(83, 232, 255, 0.13);
+  gap: 20px;
+  border-bottom: 1px solid rgba(83, 232, 255, 0.12);
+  background: rgba(3, 9, 18, 0.55);
 }
 
 .logo {
   color: var(--white);
   text-decoration: none;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 2px;
 }
 
@@ -79,358 +127,454 @@ button:focus-visible {
   align-items: center;
   gap: 9px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 1.5px;
 }
 
 .status-dot,
 .tiny-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   display: inline-block;
   border-radius: 50%;
   background: var(--cyan);
-  box-shadow: 0 0 12px var(--cyan);
+  box-shadow: 0 0 9px var(--cyan);
 }
 
-/* Page introduction */
+/* MAIN CONTAINER */
 
 .main-container {
-  width: min(1400px, 94%);
+  width: min(1180px, 90%);
   margin: 0 auto;
 }
 
-.intro {
-  padding: 38px 0 28px;
+/* FIRST SCREEN */
+
+.intro-screen {
+  min-height: calc(100vh - 70px);
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  animation: fade-in 0.7s ease both;
 }
 
 .eyebrow {
+  margin: 0 0 18px;
   color: var(--cyan);
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 3px;
-  font-weight: bold;
 }
 
-.intro h1 {
-  margin: 12px 0;
-  font-size: clamp(30px, 4vw, 48px);
+.intro-screen h1,
+.game-heading h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 58px);
+  font-weight: 600;
   letter-spacing: -1.5px;
+  line-height: 1.15;
 }
 
-.intro h1 span {
+.intro-screen h1 span,
+.game-heading h1 span {
   color: var(--cyan);
 }
 
 .intro-description {
+  max-width: 520px;
+  margin: 18px auto 0;
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 12px;
+  line-height: 1.9;
+  letter-spacing: 0.5px;
 }
 
-/* Main layout */
+.intro-decoration {
+  width: 180px;
+  height: 110px;
+  margin: 35px 0 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 17px;
+  perspective: 500px;
+}
+
+.intro-decoration span {
+  width: 43px;
+  height: 50px;
+  display: block;
+  border: 1px solid var(--blue);
+  background: rgba(37, 139, 255, 0.05);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  filter: drop-shadow(0 0 8px rgba(83, 232, 255, 0.5));
+  animation: float 2.5s ease-in-out infinite;
+}
+
+.intro-decoration span:nth-child(2) {
+  width: 55px;
+  height: 64px;
+  animation-delay: 0.25s;
+}
+
+.intro-decoration span:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+.intro-instruction,
+.intro-footer {
+  color: #66839e;
+  font-size: 9px;
+  letter-spacing: 2px;
+  line-height: 1.8;
+}
+
+.intro-instruction {
+  margin: 0 0 26px;
+}
+
+.intro-footer {
+  margin-top: 18px;
+  font-size: 8px;
+}
+
+/* FIRST SCREEN BUTTON */
+
+.system-unlock-button {
+  width: min(320px, 100%);
+  min-height: 54px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  border: 1px solid var(--blue);
+  background: rgba(37, 139, 255, 0.13);
+  color: var(--cyan);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.system-unlock-button span {
+  font-size: 20px;
+  transition: transform 0.25s ease;
+}
+
+.system-unlock-button:hover {
+  border-color: var(--cyan);
+  background: var(--blue);
+  color: #ffffff;
+  box-shadow: 0 0 25px rgba(37, 139, 255, 0.35);
+}
+
+.system-unlock-button:hover span {
+  transform: translateX(4px);
+}
+
+/* SECOND SCREEN */
+
+.game-screen {
+  padding: 48px 0 25px;
+  animation: fade-in 0.6s ease both;
+}
+
+.game-heading {
+  margin-bottom: 30px;
+}
+
+.game-heading .eyebrow {
+  margin-bottom: 12px;
+}
+
+.game-heading h1 {
+  font-size: clamp(30px, 4vw, 44px);
+}
+
+.game-heading .intro-description {
+  margin: 12px 0 0;
+}
+
+/* GAME LAYOUT */
 
 .game-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.8fr);
   align-items: stretch;
+  gap: 22px;
 }
 
 .matrix-panel,
 .mission-panel {
   min-width: 0;
   border: 1px solid var(--border);
-  background: rgba(8, 18, 32, 0.95);
+  background: rgba(7, 17, 30, 0.83);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.16);
 }
 
 .panel-top {
-  min-height: 45px;
+  min-height: 47px;
   padding: 0 18px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 15px;
   border-bottom: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 11px;
+  color: #a5bed6;
+  font-size: 10px;
   letter-spacing: 1.5px;
 }
 
 .panel-indicator {
   color: var(--cyan);
+  white-space: nowrap;
 }
 
-/*
-  HUD:
-  Larger labels and values make system status easy to scan.
-  NODE COUNT is intentionally omitted to keep the display simple.
-*/
+/* NEURAL HUD */
 
 .neural-hud {
-  padding: 25px 28px 23px;
-  background: linear-gradient(110deg, #0b1b2d, #081321);
+  padding: 20px;
   border-bottom: 1px solid var(--border);
+  background: rgba(11, 27, 46, 0.52);
 }
 
 .hud-heading {
   display: flex;
   align-items: center;
-  gap: 13px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #24405d;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .hud-index {
   color: var(--cyan);
-  font-size: 30px;
-  line-height: 1;
-  font-weight: 800;
-  text-shadow: 0 0 14px rgba(83, 232, 255, 0.35);
+  font-size: 22px;
+  font-weight: 700;
 }
 
 .hud-title {
-  color: var(--white);
-  font-size: 19px;
-  font-weight: 800;
+  color: var(--muted);
+  font-size: 10px;
   letter-spacing: 2px;
 }
 
 .hud-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px 18px;
-  padding-top: 22px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px 22px;
 }
 
 .hud-item {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
 }
 
 .hud-label {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
+  color: #6f8aa5;
+  font-size: 9px;
+  letter-spacing: 1.2px;
 }
 
 .hud-value {
-  color: var(--white);
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0.7px;
   overflow-wrap: anywhere;
+  color: var(--white);
+  font-size: 11px;
+  letter-spacing: 0.6px;
 }
 
 .hud-value.cyan {
   color: var(--cyan);
-  text-shadow: 0 0 12px rgba(83, 232, 255, 0.2);
 }
 
-.input-item {
-  grid-column: 1 / -1;
-}
-
-/* ACCESS MODE turns red during an incorrect answer. */
 .hud-value.locked {
   color: var(--red);
-  text-shadow: 0 0 12px rgba(255, 83, 111, 0.4);
 }
 
-/* Triangle game stage */
+/* TRIANGLE STAGE */
 
 .matrix-stage {
   position: relative;
-  min-height: 440px;
-  padding: 34px 28px 48px;
+  isolation: isolate;
+  min-height: 390px;
+  padding: 28px 25px 52px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  isolation: isolate;
+  background:
+    radial-gradient(ellipse at center, rgba(20, 71, 111, 0.22), transparent 70%),
+    rgba(3, 10, 19, 0.72);
 }
 
 .stage-grid {
   position: absolute;
-  z-index: -1;
   inset: 0;
+  z-index: -1;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.32;
   background-image:
-    linear-gradient(rgba(37, 139, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37, 139, 255, 0.07) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(rgba(83, 232, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(83, 232, 255, 0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
 }
 
 .stage-corner {
   position: absolute;
-  z-index: 2;
-  width: 22px;
-  height: 22px;
-  border-color: var(--blue);
+  width: 17px;
+  height: 17px;
+  border-color: rgba(83, 232, 255, 0.65);
   border-style: solid;
-  opacity: 0.75;
   pointer-events: none;
 }
 
 .corner-tl {
-  top: 14px;
-  left: 14px;
+  top: 12px;
+  left: 12px;
   border-width: 1px 0 0 1px;
 }
 
 .corner-tr {
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   border-width: 1px 1px 0 0;
 }
 
 .corner-bl {
-  bottom: 14px;
-  left: 14px;
+  bottom: 12px;
+  left: 12px;
   border-width: 0 0 1px 1px;
 }
 
 .corner-br {
-  bottom: 14px;
-  right: 14px;
+  right: 12px;
+  bottom: 12px;
   border-width: 0 1px 1px 0;
 }
 
-/*
-  CSS Grid keeps the 20 buttons evenly spaced. Each triangle is a real
-  button created in JavaScript, so users can interact with individual nodes.
-*/
-
 .matrix {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 560px;
+  width: min(100%, 430px);
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 13px;
-  opacity: 1;
-  visibility: visible;
-  transform: scale(1);
-  transition:
-    opacity 0.65s ease,
-    transform 0.65s ease,
-    visibility 0s;
+  gap: clamp(8px, 2vw, 17px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* Hide the matrix when the final unlock state appears. */
-.matrix-stage.system-unlocked .matrix {
-  opacity: 0;
-  visibility: hidden;
-  transform: scale(0.88);
-  transition:
-    opacity 0.65s ease,
-    transform 0.65s ease,
-    visibility 0s linear 0.65s;
-}
-
-.matrix-stage.system-unlocked .stage-bottom-label {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
+/* TRIANGLE BUTTONS */
 
 .triangle {
   position: relative;
   min-width: 0;
-  aspect-ratio: 1 / 1;
-  padding: 0;
+  aspect-ratio: 1;
+  padding: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--muted);
-  background: transparent;
-  border: 0;
+  border: 1px solid rgba(37, 139, 255, 0.35);
+  background: rgba(10, 31, 52, 0.64);
+  color: var(--cyan);
   cursor: pointer;
-  transition: color 0.2s ease, filter 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .triangle svg {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
-  pointer-events: none;
 }
 
 .triangle polygon {
-  fill: rgba(37, 139, 255, 0.025);
-  stroke: #28527a;
-  stroke-width: 1.4;
-  vector-effect: non-scaling-stroke;
-  transition: stroke 0.2s ease, fill 0.2s ease;
+  fill: rgba(37, 139, 255, 0.035);
+  stroke: #2877b5;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transition: fill 0.2s ease, stroke 0.2s ease;
 }
 
 .triangle .inner-line {
-  fill: none;
-  stroke: #1c3b5a;
-  stroke-width: 0.8;
-  vector-effect: non-scaling-stroke;
+  stroke: #2877b5;
+  stroke-width: 2;
 }
 
 .triangle .node-dot {
-  fill: #3477ad;
-  transition: fill 0.2s ease;
+  fill: #2877b5;
 }
 
-.triangle .node-number {
-  position: relative;
-  z-index: 1;
-  font-size: clamp(10px, 1.2vw, 14px);
-  font-weight: bold;
-  pointer-events: none;
-}
-
-.triangle:hover:not(:disabled) polygon {
-  fill: rgba(37, 139, 255, 0.12);
-  stroke: var(--cyan);
+.node-number {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+  color: #7191ac;
+  font-size: 8px;
+  letter-spacing: 0.5px;
 }
 
 .triangle:disabled {
   cursor: default;
 }
 
+.triangle:not(:disabled):hover {
+  transform: translateY(-2px);
+  border-color: var(--cyan);
+  box-shadow: 0 0 13px rgba(83, 232, 255, 0.16);
+}
+
+.triangle:not(:disabled):hover polygon {
+  fill: rgba(83, 232, 255, 0.08);
+  stroke: var(--cyan);
+}
+
 .triangle.target {
-  color: var(--cyan);
-  filter: drop-shadow(0 0 10px rgba(83, 232, 255, 0.55));
+  border-color: var(--cyan);
+  background: rgba(37, 139, 255, 0.22);
+  box-shadow:
+    0 0 15px rgba(83, 232, 255, 0.48),
+    inset 0 0 16px rgba(83, 232, 255, 0.12);
+  animation: triangle-pulse 0.65s ease-in-out;
 }
 
 .triangle.target polygon,
 .triangle.active polygon {
-  fill: rgba(37, 139, 255, 0.28);
+  fill: rgba(83, 232, 255, 0.2);
   stroke: var(--cyan);
-  stroke-width: 2.2;
 }
 
 .triangle.target .inner-line,
 .triangle.active .inner-line {
-  stroke: #3c9bce;
+  stroke: var(--cyan);
 }
 
 .triangle.target .node-dot,
 .triangle.active .node-dot {
-  fill: var(--cyan);
+  fill: #ffffff;
 }
 
 .triangle.active {
-  color: var(--cyan);
-  filter: drop-shadow(0 0 7px rgba(83, 232, 255, 0.4));
+  border-color: var(--blue);
+  background: rgba(37, 139, 255, 0.17);
+  box-shadow: inset 0 0 14px rgba(37, 139, 255, 0.12);
 }
 
 .triangle.wrong {
-  color: var(--red);
-  filter: drop-shadow(0 0 10px rgba(255, 83, 111, 0.5));
+  border-color: var(--red);
+  background: rgba(255, 83, 111, 0.16);
+  box-shadow: 0 0 14px rgba(255, 83, 111, 0.3);
 }
 
-.triangle.wrong polygon {
-  fill: rgba(255, 83, 111, 0.2);
+.triangle.wrong polygon,
+.triangle.wrong .inner-line {
   stroke: var(--red);
 }
 
@@ -438,230 +582,168 @@ button:focus-visible {
   fill: var(--red);
 }
 
+/* STAGE LABEL */
+
 .stage-bottom-label {
   position: absolute;
-  z-index: 2;
-  bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  text-align: center;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.matrix-footer {
-  min-height: 38px;
-  padding: 0 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 9px;
-  letter-spacing: 1px;
-}
-
-/*
-  ERROR OVERLAY:
-  It is positioned relative to the triangle stage so ACCESS LOCKED appears
-  inside the game frame instead of only in the HUD.
-*/
-
-.error-overlay {
-  position: absolute;
-  z-index: 10;
-  inset: 0;
+  right: 15px;
+  bottom: 15px;
+  left: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  background: rgba(5, 10, 19, 0.82);
-  backdrop-filter: blur(4px);
-  animation: errorFadeIn 0.2s ease-out;
+  gap: 9px;
+  color: #7895b0;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-align: center;
 }
 
-.error-overlay[hidden],
-.unlock-overlay[hidden] {
-  display: none;
+.tiny-dot {
+  width: 5px;
+  height: 5px;
+}
+
+/* ERROR AND SUCCESS OVERLAYS */
+
+.error-overlay,
+.success-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(3, 8, 16, 0.88);
+  backdrop-filter: blur(5px);
 }
 
 .error-box {
-  width: min(360px, 100%);
+  width: min(100%, 330px);
   padding: 28px 20px;
+  border: 1px solid rgba(255, 83, 111, 0.72);
+  background: rgba(39, 9, 22, 0.92);
   text-align: center;
-  background: rgba(35, 8, 20, 0.97);
-  border: 1px solid var(--red);
-  box-shadow:
-    0 0 25px rgba(255, 83, 111, 0.2),
-    inset 0 0 20px rgba(255, 83, 111, 0.05);
+  box-shadow: 0 0 30px rgba(255, 83, 111, 0.12);
 }
 
-.error-icon {
-  width: 38px;
-  height: 38px;
-  margin: 0 auto 15px;
-  display: grid;
-  place-items: center;
+.error-icon,
+.success-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--red);
   border-radius: 50%;
   color: var(--red);
-  font-size: 24px;
-  font-weight: bold;
-  box-shadow: 0 0 14px rgba(255, 83, 111, 0.3);
+  font-size: 22px;
 }
 
 .error-title {
   color: var(--red);
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 17px;
+  font-weight: 700;
   letter-spacing: 2px;
-  text-shadow: 0 0 12px rgba(255, 83, 111, 0.35);
 }
 
 .error-description {
-  margin-top: 12px;
-  color: #ffd7df;
-  font-size: 12px;
-  letter-spacing: 1.5px;
-}
-
-.error-subtext {
-  margin-top: 18px;
-  color: #ff8196;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-}
-
-@keyframes errorFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/*
-  SUCCESS OVERLAY:
-  At the end of level seven, the triangle matrix fades away and this
-  message occupies the same stage. The cyan glow provides a clear visual
-  contrast with the red error state.
-*/
-
-.unlock-overlay {
-  position: absolute;
-  z-index: 12;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(3, 10, 22, 0.92);
-  backdrop-filter: blur(7px);
-  animation: unlockFadeIn 0.8s ease forwards;
-}
-
-.unlock-box {
-  width: min(480px, 100%);
-  padding: 38px 24px;
-  text-align: center;
-  background:
-    radial-gradient(ellipse at center, rgba(37, 139, 255, 0.13), transparent 70%),
-    rgba(7, 18, 34, 0.96);
-  border: 1px solid var(--cyan);
-  box-shadow:
-    0 0 25px rgba(83, 232, 255, 0.16),
-    inset 0 0 30px rgba(37, 139, 255, 0.07);
-}
-
-.unlock-icon {
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 22px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--cyan);
-  border-radius: 50%;
-  color: var(--cyan);
-  font-size: 30px;
-  box-shadow: 0 0 15px rgba(83, 232, 255, 0.3);
-  animation: unlockPulse 2s ease-in-out infinite;
-}
-
-.unlock-eyebrow {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  line-height: 1.8;
-}
-
-.unlock-box h2 {
-  margin: 20px 0;
+  margin-top: 10px;
   color: var(--white);
-  font-size: clamp(25px, 4vw, 36px);
-  font-weight: 900;
-  letter-spacing: 2px;
-}
-
-.unlock-box h2 span {
-  display: block;
-  margin-top: 8px;
-  color: var(--cyan);
-  text-shadow: 0 0 18px rgba(83, 232, 255, 0.55);
-}
-
-.unlock-description {
-  color: #b7d2e8;
   font-size: 11px;
   letter-spacing: 1.5px;
 }
 
-.unlock-line {
-  width: 70%;
-  height: 2px;
-  margin: 25px auto;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-  box-shadow: 0 0 12px rgba(83, 232, 255, 0.5);
+.error-subtext {
+  margin-top: 16px;
+  color: #bc6c7d;
+  font-size: 9px;
+  letter-spacing: 1.5px;
 }
 
-.unlock-footer {
+.success-box {
+  width: min(100%, 390px);
+  padding: 30px 18px;
+  border: 1px solid rgba(83, 232, 255, 0.45);
+  background: rgba(5, 20, 35, 0.96);
+  text-align: center;
+  box-shadow: 0 0 35px rgba(37, 139, 255, 0.14);
+}
+
+.success-icon {
+  width: 43px;
+  height: 43px;
+  border-color: var(--cyan);
   color: var(--cyan);
-  font-size: 10px;
+  font-size: 25px;
+  box-shadow: 0 0 18px rgba(83, 232, 255, 0.16);
+}
+
+.success-eyebrow {
+  color: var(--cyan);
+  font-size: 9px;
+  letter-spacing: 2px;
+  line-height: 1.7;
+}
+
+.success-box h2 {
+  margin: 18px 0;
+  font-size: clamp(23px, 4vw, 32px);
   letter-spacing: 2px;
 }
 
-@keyframes unlockFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.success-box h2 span {
+  color: var(--cyan);
 }
 
-@keyframes unlockPulse {
-  0%, 100% {
-    box-shadow: 0 0 12px rgba(83, 232, 255, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(83, 232, 255, 0.5);
-  }
+.success-description {
+  color: #a1b9d0;
+  font-size: 10px;
+  letter-spacing: 1.5px;
 }
 
-/* Memory protocol panel */
+.success-line {
+  width: 65px;
+  height: 1px;
+  margin: 23px auto;
+  background: var(--cyan);
+  box-shadow: 0 0 9px var(--cyan);
+}
+
+.success-footer {
+  margin-bottom: 0;
+  color: #7392ad;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.matrix-stage.system-unlocked .matrix {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+/* MATRIX FOOTER */
+
+.matrix-footer {
+  min-height: 42px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  color: #6f8aa5;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+/* RIGHT PANEL */
 
 .mission-panel {
-  padding: 24px 21px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
 }
@@ -670,72 +752,76 @@ button:focus-visible {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
 }
 
 .heading-line {
   width: 3px;
-  height: 19px;
+  height: 18px;
   background: var(--cyan);
-  box-shadow: 0 0 10px var(--cyan);
+  box-shadow: 0 0 10px rgba(83, 232, 255, 0.5);
 }
 
 .mission-heading h2 {
   margin: 0;
-  font-size: 13px;
-  letter-spacing: 1.5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
 }
 
 .level-display {
-  padding: 25px 0;
+  padding-bottom: 18px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   border-bottom: 1px solid var(--border);
 }
 
 .label {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 10px;
   letter-spacing: 1.5px;
 }
 
 .level-number {
   color: var(--cyan);
-  font-size: 21px;
-  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 1px;
 }
 
 .signal-message {
-  padding: 25px 0;
-  min-height: 125px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--border);
 }
 
 .signal-title {
-  color: var(--cyan);
-  font-size: 13px;
-  font-weight: 800;
+  margin: 0 0 10px;
+  color: var(--white);
+  font-size: 12px;
   letter-spacing: 1px;
 }
 
 .signal-description {
+  margin: 0;
   color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: 0.5px;
 }
 
 .level-progress-section {
-  padding: 18px 0 25px;
-  border-top: 1px solid var(--border);
+  padding: 22px 0;
 }
 
 .progress-heading {
+  margin-bottom: 12px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 1px;
 }
 
@@ -744,100 +830,206 @@ button:focus-visible {
 }
 
 .progress-track {
-  height: 5px;
-  margin-top: 13px;
-  background: #17283b;
+  width: 100%;
+  height: 4px;
   overflow: hidden;
+  background: #152a3e;
 }
 
 .progress-fill {
-  width: 0%;
+  width: 0;
   height: 100%;
-  background: var(--cyan);
-  box-shadow: 0 0 10px var(--cyan);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  box-shadow: 0 0 10px rgba(83, 232, 255, 0.4);
+  transition: width 0.35s ease;
 }
+
+/* BUTTONS */
 
 .mission-actions {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  align-items: stretch;
+  gap: 0;
+  margin-top: auto;
 }
 
 .text-button {
   width: 100%;
   padding: 13px 0;
-  text-align: left;
-  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: none;
+  border-bottom: 1px solid var(--border);
   background: transparent;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 1px;
+  color: #a9c0d6;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-align: left;
   cursor: pointer;
-}
-
-.restart-button {
-  color: var(--cyan);
-}
-
-.restart-button span {
-  margin-left: 6px;
-}
-
-.reset-button {
-  color: var(--muted);
+  transition: color 0.2s ease, padding 0.2s ease;
 }
 
 .text-button:hover {
+  padding-left: 5px;
   color: var(--white);
 }
 
-.feedback-message {
-  margin-top: auto;
-  padding-top: 22px;
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 1px;
-  line-height: 1.6;
+.restart-button span {
+  color: var(--cyan);
+  font-size: 15px;
 }
 
-/* Footer */
+.reset-button {
+  color: #7f9bb5;
+}
 
-.page-footer {
-  padding: 28px 0;
+/* SECOND UNLOCK BUTTON */
+
+.unlock-game-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px 14px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: #536a83;
-  font-size: 9px;
-  letter-spacing: 1.5px;
+  border: 1px solid var(--blue);
+  background: rgba(37, 139, 255, 0.12);
+  color: var(--cyan);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
-/* Responsive layout for tablets and mobile screens. */
-@media (max-width: 900px) {
+.unlock-game-button span {
+  font-size: 17px;
+  transition: transform 0.25s ease;
+}
+
+.unlock-game-button:hover {
+  border-color: var(--cyan);
+  background: var(--blue);
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(37, 139, 255, 0.4);
+}
+
+.unlock-game-button:hover span {
+  transform: translateX(3px);
+}
+
+.unlock-game-button:active,
+.system-unlock-button:active {
+  transform: translateY(1px);
+}
+
+.feedback-message {
+  min-height: 30px;
+  margin: 22px 0 0;
+  color: #7895b0;
+  font-size: 9px;
+  line-height: 1.8;
+  letter-spacing: 1px;
+}
+
+/* FOOTER */
+
+.page-footer {
+  padding: 30px 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: #617b94;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+}
+
+/* ANIMATIONS */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-7px);
+    opacity: 1;
+  }
+}
+
+@keyframes triangle-pulse {
+  0% {
+    transform: scale(0.96);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 820px) {
+  .main-container {
+    width: min(94%, 680px);
+  }
+
+  .intro-screen {
+    min-height: calc(100vh - 70px);
+    padding: 60px 15px;
+  }
+
+  .game-screen {
+    padding-top: 38px;
+  }
+
   .game-layout {
     grid-template-columns: 1fr;
   }
 
   .mission-panel {
-    min-height: 0;
+    min-height: auto;
   }
 
-  .feedback-message {
-    margin-top: 10px;
+  .mission-actions {
+    margin-top: 0;
   }
 
   .matrix-stage {
-    min-height: 390px;
+    min-height: 350px;
+  }
+
+  .matrix {
+    width: min(100%, 400px);
   }
 }
 
-@media (max-width: 520px) {
-  .main-container {
-    width: 94%;
-  }
-
+@media (max-width: 480px) {
   .site-header {
+    min-height: 60px;
     padding: 0 4%;
   }
 
@@ -847,83 +1039,100 @@ button:focus-visible {
   }
 
   .system-status {
+    font-size: 8px;
+    letter-spacing: 0.7px;
+  }
+
+  .main-container {
+    width: 92%;
+  }
+
+  .intro-screen {
+    min-height: calc(100vh - 60px);
+    padding: 40px 8px;
+  }
+
+  .intro-screen h1 {
+    font-size: 33px;
+  }
+
+  .intro-description {
+    font-size: 11px;
+  }
+
+  .game-heading h1 {
+    font-size: 31px;
+  }
+
+  .panel-top {
+    padding: 0 12px;
     font-size: 9px;
-    letter-spacing: 0.5px;
   }
 
   .neural-hud {
-    padding: 20px 15px;
-  }
-
-  .hud-title {
-    font-size: 15px;
-    letter-spacing: 1px;
-  }
-
-  .hud-index {
-    font-size: 25px;
+    padding: 16px 13px;
   }
 
   .hud-grid {
-    gap: 19px 12px;
+    gap: 15px 10px;
   }
 
   .hud-label {
-    font-size: 10px;
-    letter-spacing: 1px;
+    font-size: 8px;
+    letter-spacing: 0.7px;
   }
 
   .hud-value {
-    font-size: 15px;
+    font-size: 9px;
   }
 
   .matrix-stage {
     min-height: 300px;
-    padding: 30px 14px 45px;
+    padding: 25px 13px 45px;
   }
 
   .matrix {
     gap: 7px;
   }
 
-  .matrix-footer {
+  .triangle {
+    padding: 4px;
+  }
+
+  .node-number {
+    right: 2px;
+    bottom: 2px;
+    font-size: 7px;
+  }
+
+  .stage-bottom-label {
     font-size: 8px;
-    flex-wrap: wrap;
-    padding: 10px;
+    letter-spacing: 0.7px;
+  }
+
+  .matrix-footer {
+    padding: 12px;
+    font-size: 8px;
+  }
+
+  .mission-panel {
+    padding: 20px 16px;
   }
 
   .page-footer {
-    flex-direction: column;
-  }
-
-  .error-box {
-    padding: 23px 15px;
-  }
-
-  .error-title {
-    font-size: 19px;
-  }
-
-  .unlock-box {
-    padding: 28px 15px;
+    font-size: 8px;
   }
 }
 
-/*
-  Accessibility: reduce animation when the visitor prefers reduced motion.
-  Reference:
-  https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
-*/
+/* ACCESSIBILITY */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-
-  .unlock-icon {
-    animation: none;
   }
 }
