@@ -1,47 +1,59 @@
-
 <!--
-TRIANGLE PROTOCOL（CLICK）
-DESIGN INSPIRED BY Link：https://www.orvelumm.com/lab?utm_source
+TRIANGLE PROTOCOL (CLICK)
+
+DESIGN INSPIRATION
+Reference: https://www.orvelumm.com/lab?utm_source
+
 This website inspired my exploration of an experimental
 digital interface and an immersive visual atmosphere.
 I used it as a visual reference when developing the
 direction of Triangle Protocol, while adapting the
 design to suit my own memory-game concept and interaction.
 
-Triangle Protocol is a browser-based memory reconstruction game. The
-player observes a sequence of highlighted triangle nodes and then
-repeats the same sequence by clicking the nodes in the correct order.
-The fictional security-system theme gives this simple memory activity
-a clear purpose: each completed level represents progress towards
-restoring access to the system.
+PROJECT CONTEXT AND INTERACTION
+Triangle Protocol is a browser-based memory reconstruction game.
+The player observes a sequence of highlighted triangle nodes
+and then repeats the same sequence by clicking the nodes in
+the correct order. The fictional security-system theme gives
+this simple memory activity a clear purpose: each completed
+level represents progress towards restoring access to the system.
 
-I organised the interface into an introduction screen and a separate
-game screen. The introduction establishes the context before the player
-starts interacting.  This separation is intended to make the first step clear 
-and avoid presenting all the game information at once.
+INTERFACE STRUCTURE
+I organised the interface into an introduction screen and a
+separate game screen. The introduction establishes the context
+before the player starts interacting. This separation is intended
+to make the first step clear and avoid presenting all the game
+information at once.
 
-The HTML uses semantic elements such as header, main, section, aside
-and footer to organise content into meaningful areas. Buttons are used
-for actions because they are interactive controls, rather than using
-ordinary text elements as clickable controls. The type="button"
-attribute makes the intended button behaviour explicit.
+HTML SEMANTICS AND CONTROLS
+The HTML uses semantic elements such as header, main, section,
+aside and footer to organise content into meaningful areas.
+Buttons are used for actions because they are interactive controls,
+rather than using ordinary text elements as clickable controls.
+The type="button" attribute makes the intended button behaviour
+explicit.
 
-The hidden attribute is used on the game screen and feedback overlays
-so that these elements can be shown or hidden as the interaction
-progresses. The JavaScript controls when the player moves between
-screens and when error or success feedback becomes visible.
+The hidden attribute is used on the game screen and feedback
+overlays so that these elements can be shown or hidden as the
+interaction progresses. The JavaScript controls when the player
+moves between screens and when error or success feedback becomes
+visible.
 
-Accessibility was also considered. Labels such as aria-label provide
-descriptions for interface elements where visual appearance alone may
-not communicate their purpose. Decorative elements use aria-hidden="true" so that
-they do not add unnecessary information to the accessibility tree.
+ACCESSIBILITY
+Accessibility was also considered. Labels such as aria-label
+provide descriptions for interface elements where visual appearance
+alone may not communicate their purpose. Decorative elements use
+aria-hidden="true" so that they do not add unnecessary information
+to the accessibility tree. The progress bar also includes ARIA
+attributes to communicate the level-progress range and current value.
 
+VISUAL ASSETS AND ATTRIBUTION
 The triangle shapes are generated through inline SVG in JavaScript,
 rather than loaded from an external image library. The supplied HTML
 does not reference third-party image, icon or audio assets. Therefore,
 there are no external media creators or media licences to attribute
-for the assets shown in this version.
-
+for the assets shown in this version. The visual reference above is
+acknowledged as inspiration for the interface direction.
 -->
 
 <!DOCTYPE html>
@@ -54,6 +66,12 @@ for the assets shown in this version.
   <script src="script.js" defer></script>
 </head>
 <body>
+  <!--
+  SITE HEADER
+  The header identifies the fictional system and displays its
+  online status. Keeping this information separate from the main
+  content establishes the visual identity before the player begins.
+  -->
   <header class="site-header">
     <a class="logo" href="#">TRIANGLE<span>_PROTOCOL</span></a>
     <div class="system-status">
@@ -64,7 +82,13 @@ for the assets shown in this version.
 
   <main class="main-container">
 
-    <!-- FIRST SCREEN: INTRO -->
+    <!--
+    FIRST SCREEN: INTRODUCTION
+    This screen introduces the memory-reconstruction concept
+    before presenting the interactive game. The main heading,
+    short instruction and button establish a clear starting point.
+    The player must activate the system before accessing the game.
+    -->
     <section class="intro-screen" id="intro-screen">
       <p class="eyebrow">MEMORY RECONSTRUCTION SYSTEM</p>
 
@@ -74,6 +98,8 @@ for the assets shown in this version.
         Observe the signal. Remember the pattern. Restore the system.
       </p>
 
+      <!-- Decorative elements support the interface atmosphere
+           without adding unnecessary information for screen readers. -->
       <div class="intro-decoration" aria-hidden="true">
         <span></span>
         <span></span>
@@ -84,6 +110,8 @@ for the assets shown in this version.
         A COGNITIVE MEMORY TEST // TP-07
       </p>
 
+      <!-- The button provides the first clear Click interaction.
+           Its visible label communicates the action to the player. -->
       <button class="system-unlock-button" id="system-unlock-button" type="button">
         UNLOCK THE SYSTEM
         <span aria-hidden="true">→</span>
@@ -92,7 +120,12 @@ for the assets shown in this version.
       <p class="intro-footer">INITIALISE THE INTERFACE TO CONTINUE</p>
     </section>
 
-    <!-- SECOND SCREEN: GAME -->
+    <!--
+    SECOND SCREEN: GAME
+    The hidden attribute keeps the game out of view until the
+    player enters the interactive experience. This staged structure
+    avoids overwhelming new players with controls at the beginning.
+    -->
     <section class="game-screen" id="game-screen" hidden>
       <div class="game-heading">
         <p class="eyebrow">NEURAL INTERFACE // TP-07</p>
@@ -102,15 +135,23 @@ for the assets shown in this version.
         </p>
       </div>
 
+      <!-- The game layout groups the main interaction and its controls
+           into separate areas to make the interface easier to scan. -->
       <section class="game-layout" aria-label="Triangle memory game">
 
-        <!-- LEFT PANEL -->
+        <!-- LEFT PANEL
+             This panel contains the triangle matrix, game status
+             information and visual feedback during interaction. -->
         <div class="matrix-panel">
           <div class="panel-top">
             <span>TRIANGLE INTERFACE</span>
             <span class="panel-indicator">● ACTIVE</span>
           </div>
 
+          <!-- GAME STATUS HUD
+               The HUD presents the current input state, signal status,
+               security level and access mode. These indicators help
+               players understand what the system is doing. -->
           <section class="neural-hud" aria-label="Game status">
             <div class="hud-heading">
               <span class="hud-index" id="hud-index">01</span>
@@ -140,6 +181,10 @@ for the assets shown in this version.
             </div>
           </section>
 
+          <!-- TRIANGLE MATRIX
+               This stage contains the interactive nodes and decorative
+               interface details. The JavaScript generates the triangle
+               buttons and manages their sequence-based interaction. -->
           <div class="matrix-stage" id="matrix-stage">
             <div class="stage-grid" aria-hidden="true"></div>
             <div class="stage-corner corner-tl" aria-hidden="true"></div>
@@ -149,7 +194,11 @@ for the assets shown in this version.
 
             <div class="matrix" id="matrix" aria-label="Triangle nodes"></div>
 
-            <!-- Wrong answer overlay -->
+            <!-- WRONG-ANSWER FEEDBACK
+                 This overlay communicates an incorrect sequence.
+                 The alert role and assertive live region are intended
+                 to make important error feedback available to
+                 assistive technologies as well as visually. -->
             <div class="error-overlay" id="error-overlay" hidden>
               <div class="error-box" role="alert" aria-live="assertive">
                 <span class="error-icon" aria-hidden="true">!</span>
@@ -159,7 +208,11 @@ for the assets shown in this version.
               </div>
             </div>
 
-            <!-- Final success overlay -->
+            <!-- FINAL SUCCESS FEEDBACK
+                 This overlay communicates completion after the player
+                 successfully finishes the required security levels.
+                 The success message provides a clear end point for
+                 the memory-game interaction. -->
             <div class="success-overlay" id="success-overlay" hidden>
               <div class="success-box">
                 <div class="success-icon" aria-hidden="true">✓</div>
@@ -171,6 +224,9 @@ for the assets shown in this version.
               </div>
             </div>
 
+            <!-- This label communicates the current stage instruction.
+                 It supports the visual status indicators around the
+                 matrix and helps explain what the player should do. -->
             <div class="stage-bottom-label">
               <span class="tiny-dot" aria-hidden="true"></span>
               <span id="stage-instruction">SYSTEM IN STANDBY</span>
@@ -183,7 +239,11 @@ for the assets shown in this version.
           </div>
         </div>
 
-        <!-- RIGHT PANEL -->
+        <!-- RIGHT PANEL: CONTROLS
+             The aside groups the mission information, progress display
+             and restart/reset controls. Separating these controls from
+             the triangle matrix helps distinguish game input from
+             system management actions. -->
         <aside class="mission-panel" aria-label="Memory protocol controls">
           <div class="mission-heading">
             <span class="heading-line" aria-hidden="true"></span>
@@ -195,6 +255,8 @@ for the assets shown in this version.
             <span class="level-number" id="level-count">01 / 07</span>
           </div>
 
+          <!-- Dynamic status text explains the current game state
+               and provides instructions for the next action. -->
           <div class="signal-message">
             <p class="signal-title" id="matrix-status">SYSTEM STANDBY.</p>
             <p class="signal-description" id="instruction">
@@ -202,6 +264,10 @@ for the assets shown in this version.
             </p>
           </div>
 
+          <!-- PROGRESS INDICATOR
+               The progress bar shows advancement through the seven
+               levels. Its ARIA attributes describe the minimum,
+               maximum and current progress values. -->
           <div class="level-progress-section">
             <div class="progress-heading">
               <span>LEVEL PROGRESS</span>
@@ -221,6 +287,11 @@ for the assets shown in this version.
             </div>
           </div>
 
+          <!-- INTERACTION CONTROLS
+               Restart and reset provide ways to repeat or leave the
+               current test. The separate unlock button offers another
+               entry point into the game. Each action uses a button
+               element to support standard interactive behaviour. -->
           <div class="mission-actions">
             <button class="text-button restart-button" id="start-button" type="button">
               RESTART TEST <span aria-hidden="true">↗</span>
@@ -235,12 +306,17 @@ for the assets shown in this version.
             </button>
           </div>
 
+          <!-- This live region is available for feedback updates
+               from JavaScript without requiring a page reload. -->
           <p class="feedback-message" id="feedback" aria-live="polite">
             SYSTEM READY.
           </p>
         </aside>
       </section>
 
+      <!-- FOOTER
+           The footer reinforces the fictional identity of the game
+           and provides a consistent ending to the interface layout. -->
       <footer class="page-footer">
         <span>TP-07 // MEMORY TEST</span>
         <span>INTERACTIVE SYSTEMS DIVISION</span>

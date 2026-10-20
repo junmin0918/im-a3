@@ -1,18 +1,21 @@
 
 /*
-TRIANGLE PROTOCOL（CLICK）
+TRIANGLE PROTOCOL (CLICK)
 
+VISUAL DIRECTION
 The visual direction is based on a fictional digital security interface.
 Deep navy backgrounds create a dark environment, while cyan and blue
 highlights distinguish important information and active controls. Red
-is reserved for incorrect input.These colour choices support the system
+is reserved for incorrect input. These colour choices support the system
 theme and make changes in interaction state easier to recognise.
 
+DESIGN SYSTEM
 CSS custom properties are used for the main colours. This allows the
 same colour values to be reused across panels, buttons, borders and
 status indicators. It also makes later visual adjustments more
 consistent, because a shared colour can be changed in one place.
 
+LAYOUT AND RESPONSIVE DESIGN
 The layout uses CSS Grid for the main game area and the triangle matrix.
 Grid makes it possible to align the game board and mission panel into
 a clear composition, while the five-column triangle matrix keeps the
@@ -28,12 +31,14 @@ while spacing and text sizes are reduced to make the interface fit
 smaller displays. The intention is to preserve the main interaction
 rather than simply shrinking the desktop layout.
 
+INTERACTION FEEDBACK
 Hover, active and transition styles provide visual feedback when a
 player interacts with a button or triangle. The error and success
 overlays use a darker background to bring attention to the current
 game state. The keyboard focus-visible outline helps users identify
 which interactive control currently has keyboard focus.
 
+ACCESSIBILITY
 The reduced-motion media query respects a user's operating-system
 preference for less animation. This is important because decorative
 movement should not be necessary for understanding or completing the
@@ -42,6 +47,7 @@ memory test.
 Technical reference — MDN Web Docs, prefers-reduced-motion:
 https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion
 
+ASSETS AND DESIGN CHALLENGES
 The interface uses system font families such as Arial, Helvetica and
 sans-serif. No external font stylesheet is linked in the supplied
 HTML, so there is no third-party font file requiring attribution.
@@ -54,6 +60,9 @@ the strongest visual feedback is reserved for important states such as
 hover and a wrong answer.
 */
 
+/* SHARED COLOUR VARIABLES
+   These variables keep the interface palette consistent and make
+   colours easier to adjust without editing each component separately. */
 :root {
   --background: #050a13;
   --panel: #0a1422;
@@ -65,14 +74,19 @@ hover and a wrong answer.
   --red: #ff536f;
 }
 
+/* Apply consistent sizing to elements and their padding. */
 * {
   box-sizing: border-box;
 }
 
+/* Ensure hidden screens and overlays are not displayed. */
 [hidden] {
   display: none !important;
 }
 
+/* BASE PAGE
+   Smooth scrolling is enabled for the page, while the body establishes
+   the dark gradient, text colour and system font used throughout. */
 html {
   min-height: 100%;
   scroll-behavior: smooth;
@@ -86,19 +100,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Inherit the interface typography for interactive controls. */
 button,
 a {
   font: inherit;
 }
 
+/* KEYBOARD ACCESSIBILITY
+   A visible cyan outline helps keyboard users identify the focused
+   button or link without relying only on hover effects. */
 button:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 4px;
 }
 
-/* HEADER */
-
+/* HEADER
+   Flexbox places the system identity and online status at opposite
+   sides of the header, creating a clear and balanced top section. */
 .site-header {
   min-height: 70px;
   padding: 0 5%;
@@ -131,6 +150,7 @@ a:focus-visible {
   letter-spacing: 1.5px;
 }
 
+/* Small glowing indicators reinforce the digital-system aesthetic. */
 .status-dot,
 .tiny-dot {
   width: 6px;
@@ -141,15 +161,18 @@ a:focus-visible {
   box-shadow: 0 0 9px var(--cyan);
 }
 
-/* MAIN CONTAINER */
-
+/* MAIN CONTAINER
+   A maximum width keeps the desktop layout readable while the
+   percentage width allows the content to adapt to different screens. */
 .main-container {
   width: min(1180px, 90%);
   margin: 0 auto;
 }
 
-/* FIRST SCREEN */
-
+/* INTRODUCTION SCREEN
+   Flexbox centres the opening content vertically and horizontally.
+   The large heading and limited text width establish a clear
+   hierarchy before the player starts the memory challenge. */
 .intro-screen {
   min-height: calc(100vh - 70px);
   padding: 80px 20px;
@@ -191,6 +214,9 @@ a:focus-visible {
   letter-spacing: 0.5px;
 }
 
+/* DECORATIVE TRIANGLES
+   The geometric shapes echo the game's main interaction and introduce
+   the visual theme without adding more instructions to the screen. */
 .intro-decoration {
   width: 180px;
   height: 110px;
@@ -240,8 +266,9 @@ a:focus-visible {
   font-size: 8px;
 }
 
-/* FIRST SCREEN BUTTON */
-
+/* INTRODUCTION BUTTON
+   The button is the main entry point to the experience. Its border,
+   colour and hover transition help communicate that it is clickable. */
 .system-unlock-button {
   width: min(320px, 100%);
   min-height: 54px;
@@ -280,8 +307,10 @@ a:focus-visible {
   transform: translateX(4px);
 }
 
-/* SECOND SCREEN */
-
+/* GAME SCREEN
+   The game heading introduces the main interaction after the player
+   leaves the introduction screen. The fade-in animation maintains
+   a consistent transition between the two interface states. */
 .game-screen {
   padding: 48px 0 25px;
   animation: fade-in 0.6s ease both;
@@ -303,8 +332,10 @@ a:focus-visible {
   margin: 12px 0 0;
 }
 
-/* GAME LAYOUT */
-
+/* GAME LAYOUT
+   CSS Grid separates the main triangle board from the mission panel.
+   The larger left column gives the primary Click interaction more
+   space, while the right column contains instructions and controls. */
 .game-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.8fr);
@@ -320,6 +351,8 @@ a:focus-visible {
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.16);
 }
 
+/* The panel heading separates interface information from the content
+   below it and keeps the system status easy to scan. */
 .panel-top {
   min-height: 47px;
   padding: 0 18px;
@@ -338,8 +371,10 @@ a:focus-visible {
   white-space: nowrap;
 }
 
-/* NEURAL HUD */
-
+/* NEURAL HUD
+   The status panel groups four types of information in a two-column
+   grid. This keeps important game states visible without covering
+   the triangle matrix itself. */
 .neural-hud {
   padding: 20px;
   border-bottom: 1px solid var(--border);
@@ -399,8 +434,10 @@ a:focus-visible {
   color: var(--red);
 }
 
-/* TRIANGLE STAGE */
-
+/* TRIANGLE STAGE
+   The central stage gives the interactive nodes a dedicated area.
+   The radial gradient and subtle grid support the security-interface
+   theme while keeping the sequence as the main visual focus. */
 .matrix-stage {
   position: relative;
   isolation: isolate;
@@ -415,6 +452,7 @@ a:focus-visible {
     rgba(3, 10, 19, 0.72);
 }
 
+/* The background grid is decorative and does not receive pointer input. */
 .stage-grid {
   position: absolute;
   inset: 0;
@@ -427,6 +465,7 @@ a:focus-visible {
   background-size: 30px 30px;
 }
 
+/* Corner markers frame the game area like a digital monitoring display. */
 .stage-corner {
   position: absolute;
   width: 17px;
@@ -460,6 +499,8 @@ a:focus-visible {
   border-width: 0 1px 1px 0;
 }
 
+/* The five-column CSS Grid keeps all triangle nodes evenly arranged.
+   The responsive gap helps the matrix fit smaller display widths. */
 .matrix {
   width: min(100%, 430px);
   display: grid;
@@ -468,8 +509,11 @@ a:focus-visible {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* TRIANGLE BUTTONS */
-
+/* TRIANGLE BUTTONS
+   Each triangle acts as an interactive node in the memory sequence.
+   Shared styles keep the nodes consistent, while separate state
+   classes provide visual feedback for targets, correct inputs and
+   incorrect selections. */
 .triangle {
   position: relative;
   min-width: 0;
@@ -525,6 +569,9 @@ a:focus-visible {
   cursor: default;
 }
 
+/* Hover feedback indicates which triangle the pointer is over.
+   It is deliberately subtle so that it does not overpower the
+   stronger sequence and error states. */
 .triangle:not(:disabled):hover {
   transform: translateY(-2px);
   border-color: var(--cyan);
@@ -536,6 +583,8 @@ a:focus-visible {
   stroke: var(--cyan);
 }
 
+/* The target state makes the sequence currently being demonstrated
+   easier to distinguish from inactive nodes. */
 .triangle.target {
   border-color: var(--cyan);
   background: rgba(37, 139, 255, 0.22);
@@ -561,12 +610,15 @@ a:focus-visible {
   fill: #ffffff;
 }
 
+/* The active state visually distinguishes a selected node. */
 .triangle.active {
   border-color: var(--blue);
   background: rgba(37, 139, 255, 0.17);
   box-shadow: inset 0 0 14px rgba(37, 139, 255, 0.12);
 }
 
+/* Red is reserved for incorrect input to distinguish an error
+   from the blue and cyan states used during normal gameplay. */
 .triangle.wrong {
   border-color: var(--red);
   background: rgba(255, 83, 111, 0.16);
@@ -582,8 +634,9 @@ a:focus-visible {
   fill: var(--red);
 }
 
-/* STAGE LABEL */
-
+/* STAGE LABEL
+   This label communicates the current stage instruction at the
+   bottom of the matrix without obstructing the interactive nodes. */
 .stage-bottom-label {
   position: absolute;
   right: 15px;
@@ -604,8 +657,10 @@ a:focus-visible {
   height: 5px;
 }
 
-/* ERROR AND SUCCESS OVERLAYS */
-
+/* ERROR AND SUCCESS OVERLAYS
+   These overlays place feedback above the game matrix. Their dark
+   background reduces visual competition from the nodes and directs
+   attention to the current result of the player's input. */
 .error-overlay,
 .success-overlay {
   position: absolute;
@@ -619,6 +674,9 @@ a:focus-visible {
   backdrop-filter: blur(5px);
 }
 
+/* ERROR FEEDBACK
+   The red border and text distinguish an incorrect sequence from
+   the normal game state. */
 .error-box {
   width: min(100%, 330px);
   padding: 28px 20px;
@@ -642,6 +700,9 @@ a:focus-visible {
   font-size: 22px;
 }
 
+/* SUCCESS FEEDBACK
+   Cyan accents create a positive visual contrast with the red
+   error overlay and mark completion of the memory challenge. */
 .error-title {
   color: var(--red);
   font-size: 17px;
@@ -719,13 +780,16 @@ a:focus-visible {
   letter-spacing: 1.5px;
 }
 
+/* When the system is unlocked, the matrix fades and scales down,
+   making the completion overlay the visual focus. */
 .matrix-stage.system-unlocked .matrix {
   opacity: 0;
   transform: scale(0.96);
 }
 
-/* MATRIX FOOTER */
-
+/* MATRIX FOOTER
+   The footer separates technical status details from the central
+   interaction using a border and smaller, muted text. */
 .matrix-footer {
   min-height: 42px;
   padding: 12px 18px;
@@ -740,8 +804,9 @@ a:focus-visible {
   letter-spacing: 1px;
 }
 
-/* RIGHT PANEL */
-
+/* RIGHT PANEL
+   Flexbox stacks the mission information vertically so that the
+   level, instructions, progress bar and controls form a clear order. */
 .mission-panel {
   padding: 24px 20px;
   display: flex;
@@ -790,6 +855,8 @@ a:focus-visible {
   letter-spacing: 1px;
 }
 
+/* Instructions are kept in their own section to make the next
+   required action easy to locate. */
 .signal-message {
   padding: 22px 0;
   border-bottom: 1px solid var(--border);
@@ -810,6 +877,9 @@ a:focus-visible {
   letter-spacing: 0.5px;
 }
 
+/* PROGRESS INDICATOR
+   The progress track provides a visual representation of level
+   completion, while the text shows the numeric progress as well. */
 .level-progress-section {
   padding: 22px 0;
 }
@@ -844,8 +914,10 @@ a:focus-visible {
   transition: width 0.35s ease;
 }
 
-/* BUTTONS */
-
+/* BUTTONS
+   The mission actions are stacked vertically to maintain a clear
+   control hierarchy. Hover feedback changes colour and position
+   slightly to help users recognise interactive elements. */
 .mission-actions {
   display: flex;
   flex-direction: column;
@@ -886,8 +958,10 @@ a:focus-visible {
   color: #7f9bb5;
 }
 
-/* SECOND UNLOCK BUTTON */
-
+/* SECOND UNLOCK BUTTON
+   This button provides an additional route to the unlock action
+   within the mission panel, using the same colour language as
+   the primary introduction button. */
 .unlock-game-button {
   width: 100%;
   margin-top: 12px;
@@ -931,6 +1005,8 @@ a:focus-visible {
   transform: translateY(1px);
 }
 
+/* This feedback message reserves space below the controls for
+   short status updates, reducing sudden layout changes. */
 .feedback-message {
   min-height: 30px;
   margin: 22px 0 0;
@@ -940,8 +1016,9 @@ a:focus-visible {
   letter-spacing: 1px;
 }
 
-/* FOOTER */
-
+/* FOOTER
+   Flexible wrapping allows the footer labels to remain readable
+   when the available horizontal space becomes smaller. */
 .page-footer {
   padding: 30px 0 10px;
   display: flex;
@@ -954,8 +1031,10 @@ a:focus-visible {
   letter-spacing: 1.2px;
 }
 
-/* ANIMATIONS */
-
+/* ANIMATIONS
+   These animations add restrained movement to the interface.
+   They support the atmosphere and feedback rather than carrying
+   information that the player must understand to complete the game. */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -990,8 +1069,11 @@ a:focus-visible {
   }
 }
 
-/* RESPONSIVE */
-
+/* RESPONSIVE DESIGN
+   At narrower widths, the two main panels stack vertically and
+   their spacing is adjusted. This preserves access to the game
+   board and controls without requiring the desktop layout to fit
+   unchanged on a smaller screen. */
 @media (max-width: 820px) {
   .main-container {
     width: min(94%, 680px);
@@ -1027,6 +1109,9 @@ a:focus-visible {
   }
 }
 
+/* MOBILE LAYOUT
+   Smaller typography, padding and grid gaps help the interface
+   fit narrow screens while keeping the triangle nodes usable. */
 @media (max-width: 480px) {
   .site-header {
     min-height: 60px;
@@ -1124,8 +1209,10 @@ a:focus-visible {
   }
 }
 
-/* ACCESSIBILITY */
-
+/* REDUCED MOTION ACCESSIBILITY
+   Respect the operating-system preference for reduced motion.
+   Shortening animations and transitions helps avoid unnecessary
+   movement for users who prefer a less animated interface. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

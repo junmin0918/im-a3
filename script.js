@@ -10,8 +10,8 @@ levels. This gives the experience a gradual increase in difficulty
 while keeping the main action consistent: the player clicks triangles.
 
 The game uses different modes to distinguish between standby, sequence
-playback, player input, transitions, errors and completion. Checking
-the current mode prevents a player from submitting answers while the
+playback, player input, transitions, errors and completion. Checking the
+current mode prevents a player from submitting answers while the
 sequence is being shown. The separate restart and reset actions also
 give the controls different purposes: restart begins a new test, while
 reset returns the game to standby.
@@ -44,7 +44,8 @@ The progress bar also updates its aria-valuenow attribute so its current
 value is available to assistive technology. Status text and accessible
 labels provide information beyond colour alone. These details support
 the goal of making the interaction understandable, although further
-testing with keyboard.
+keyboard accessibility testing is needed to confirm that all controls
+work as expected.
 
 Development reflection: one challenge is coordinating timing, player
 input and screen state. If a reset happens while a sequence is playing,
@@ -72,34 +73,52 @@ this project.
 */
 
 /*
-  TRIANGLE PROTOCOL — GAME LOGIC
+TRIANGLE PROTOCOL — GAME LOGIC
 
-  1. UNLOCK THE SYSTEM opens the game screen.
-  2. UNLOCK starts the memory sequence.
-  3. RESTART TEST restarts from Level 1.
-  4. RESET PROTOCOL returns to standby.
+1. UNLOCK THE SYSTEM opens the game screen.
+2. UNLOCK starts the memory sequence.
+3. RESTART TEST restarts from Level 1.
+4. RESET PROTOCOL returns to standby.
 */
+
+
+/* Get the intro screen, game screen and initial unlock button. */
 
 const introScreen = document.getElementById("intro-screen");
 const gameScreen = document.getElementById("game-screen");
 const systemUnlockButton = document.getElementById("system-unlock-button");
 
+
+/* Get the triangle matrix and its surrounding stage. */
+
 const matrix = document.getElementById("matrix");
 const matrixStage = document.getElementById("matrix-stage");
+
+
+/* Get the level counter, progress information and progress bar. */
 
 const levelCount = document.getElementById("level-count");
 const levelProgress = document.getElementById("level-progress");
 const progressFill = document.getElementById("progress-fill");
 const progressTrack = document.getElementById("progress-track");
 
+
+/* Get the text elements used to guide the player and show feedback. */
+
 const matrixStatus = document.getElementById("matrix-status");
 const instruction = document.getElementById("instruction");
 const feedback = document.getElementById("feedback");
 const stageInstruction = document.getElementById("stage-instruction");
 
+
+/* Get the buttons used to start, reset and unlock the game. */
+
 const startButton = document.getElementById("start-button");
 const resetButton = document.getElementById("reset-button");
 const unlockGameButton = document.getElementById("unlock-game-button");
+
+
+/* Get the information displayed in the system HUD. */
 
 const hudIndex = document.getElementById("hud-index");
 const inputRequired = document.getElementById("input-required");
@@ -107,12 +126,21 @@ const signalStatus = document.getElementById("signal-status");
 const securityLevel = document.getElementById("security-level");
 const accessMode = document.getElementById("access-mode");
 
+
+/* Get the error and success overlays shown during the game. */
+
 const errorOverlay = document.getElementById("error-overlay");
 const successOverlay = document.getElementById("success-overlay");
+
+
+/* Set the number of triangle nodes, game levels and starting sequence length. */
 
 const TOTAL_TRIANGLES = 20;
 const TOTAL_LEVELS = 7;
 const STARTING_SEQUENCE_LENGTH = 3;
+
+
+/* Store the triangle buttons and current game progress. */
 
 let triangles = [];
 let currentLevel = 1;
@@ -121,25 +149,36 @@ let playerPosition = 0;
 let mode = "idle";
 let sessionId = 0;
 
-/* Utility functions */
+
+/* Utility function: pause the game logic for a specified time. */
 
 function wait(milliseconds) {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
+
+/* Utility function: format a number with a leading zero. */
+
 function padLevel(number) {
   return String(number).padStart(2, "0");
 }
+
+
+/* Calculate the sequence length for the current level. */
 
 function getSequenceLength(level) {
   return STARTING_SEQUENCE_LENGTH + level - 1;
 }
 
+
+/* Update the feedback message displayed to the player. */
+
 function setFeedback(message) {
   feedback.textContent = message;
 }
 
-/* Update level information and progress bar */
+
+/* Update the current level information and progress bar. */
 
 function updateHud() {
   const levelText =
@@ -159,7 +198,8 @@ function updateHud() {
   progressTrack.setAttribute("aria-valuenow", completedLevels);
 }
 
-/* Update system status */
+
+/* Update the system status, required input and access mode. */
 
 function setHudStatus(status, input, access) {
   signalStatus.textContent = status;
@@ -169,7 +209,8 @@ function setHudStatus(status, input, access) {
   accessMode.classList.toggle("locked", access === "LOCKED");
 }
 
-/* Enable or disable triangle buttons */
+
+/* Enable or disable all triangle buttons to control player input. */
 
 function setTrianglesEnabled(enabled) {
   triangles.forEach(triangle => {
@@ -177,7 +218,8 @@ function setTrianglesEnabled(enabled) {
   });
 }
 
-/* Clear triangle highlights */
+
+/* Remove all visual states from the triangle buttons. */
 
 function clearTriangleStates() {
   triangles.forEach(triangle => {
@@ -185,7 +227,13 @@ function clearTriangleStates() {
   });
 }
 
-/* Create the 20 triangle buttons */
+
+/*
+Create the twenty triangle buttons dynamically.
+
+Each button contains inline SVG shapes and a node number. An individual
+click listener passes the selected triangle's index to the game logic.
+*/
 
 function createMatrix() {
   matrix.innerHTML = "";
@@ -221,7 +269,12 @@ function createMatrix() {
   }
 }
 
-/* Generate a random sequence without repeated triangles */
+
+/*
+Generate a random sequence of triangles without repeating a node
+within the same sequence. The required sequence length increases
+as the player progresses through the levels.
+*/
 
 function generateSequence() {
   const availableNodes = Array.from(
@@ -246,7 +299,14 @@ function generateSequence() {
   return result;
 }
 
-/* Show the sequence before the player clicks */
+
+/*
+Display the generated sequence before the player starts clicking.
+
+The mode changes to "showing" so that input is disabled during playback.
+The session identifier prevents an older sequence from continuing
+after the player restarts or resets the game.
+*/
 
 async function showSequence(session) {
   mode = "showing";
@@ -297,7 +357,14 @@ async function showSequence(session) {
   setFeedback("YOUR TURN. REPEAT THE SEQUENCE.");
 }
 
-/* Check the player's selection */
+
+/*
+Check whether the player's selected triangle matches the next
+expected triangle in the sequence.
+
+Correct selections advance the player's position. An incorrect
+selection stops input and triggers the error feedback.
+*/
 
 function handleTriangleClick(index) {
   if (mode !== "playing") return;
@@ -321,7 +388,7 @@ function handleTriangleClick(index) {
     return;
   }
 
-  /* Wrong answer */
+  /* Wrong answer: lock input and display the error overlay. */
 
   mode = "wrong";
   setTrianglesEnabled(false);
@@ -347,7 +414,12 @@ function handleTriangleClick(index) {
   });
 }
 
-/* Complete a level */
+
+/*
+Complete the current level after every triangle has been selected
+correctly. Advance to the next level or finish the game if the
+player has completed all seven levels.
+*/
 
 async function completeLevel(session) {
   if (session !== sessionId) return;
@@ -377,7 +449,8 @@ async function completeLevel(session) {
   startLevel(session);
 }
 
-/* Start an individual level */
+
+/* Generate and display a new sequence for the current level. */
 
 function startLevel(session) {
   if (session !== sessionId) return;
@@ -389,7 +462,12 @@ function startLevel(session) {
   showSequence(session);
 }
 
-/* Show the final success screen */
+
+/*
+Display the final success state after all seven levels are complete.
+Disable triangle input, update the progress display and reveal
+the success overlay.
+*/
 
 function finishGame() {
   mode = "complete";
@@ -417,19 +495,19 @@ function finishGame() {
   matrixStage.classList.add("system-unlocked");
 }
 
-/*
-  BUTTON 1:
-  UNLOCK THE SYSTEM
 
-  Hide the intro screen and show the game.
-  This does not start the memory sequence.
+/*
+BUTTON 1: UNLOCK THE SYSTEM
+
+Hide the intro screen and display the game screen. The game
+returns to standby; the player must click UNLOCK to begin.
 */
 
 systemUnlockButton.addEventListener("click", () => {
   introScreen.hidden = true;
   gameScreen.hidden = false;
 
-  /* Game opens in standby with all triangles dark. */
+  /* Open the game in standby with all triangles dark. */
   resetGame();
 
   window.scrollTo({
@@ -438,11 +516,12 @@ systemUnlockButton.addEventListener("click", () => {
   });
 });
 
-/*
-  BUTTON 2:
-  UNLOCK
 
-  Start the memory challenge only when the game is in standby.
+/*
+BUTTON 2: UNLOCK
+
+Start the memory challenge only when the game is in standby.
+If the game is already active, display a message instead.
 */
 
 unlockGameButton.addEventListener("click", () => {
@@ -454,7 +533,13 @@ unlockGameButton.addEventListener("click", () => {
   startGame();
 });
 
-/* Start a new test from Level 1 */
+
+/*
+Start a new test from Level 1.
+
+Increase the session identifier to invalidate any previous
+sequence playback, then reset the game state and start the first level.
+*/
 
 function startGame() {
   sessionId++;
@@ -485,10 +570,13 @@ function startGame() {
   startLevel(session);
 }
 
+
 /*
-  RESET PROTOCOL:
-  Stop the current game and return to standby.
-  The triangles stay dark until UNLOCK is clicked.
+RESET PROTOCOL
+
+Stop the current game and return to standby. Incrementing sessionId
+prevents any previous sequence playback from continuing. The triangles
+stay dark until the player clicks UNLOCK again.
 */
 
 function resetGame() {
@@ -517,7 +605,13 @@ function resetGame() {
   updateHud();
 }
 
-/* RESTART TEST */
+
+/*
+RESTART TEST
+
+Restart the challenge from Level 1. If the game is still in standby,
+ask the player to click UNLOCK first.
+*/
 
 startButton.addEventListener("click", () => {
   if (mode === "idle") {
@@ -528,11 +622,16 @@ startButton.addEventListener("click", () => {
   startGame();
 });
 
-/* RESET PROTOCOL */
+
+/* RESET PROTOCOL: return to standby when the reset button is clicked. */
 
 resetButton.addEventListener("click", resetGame);
 
-/* Initialise the game without starting it */
+
+/*
+Initialise the triangle matrix and reset the game to standby.
+The game does not begin automatically when the page loads.
+*/
 
 createMatrix();
 resetGame();
